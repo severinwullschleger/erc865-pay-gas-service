@@ -6,7 +6,6 @@ import getSmartContracts from './get-smart-contracts.mjs';
 
 
 export const deployContracts = async () => {
-  console.log('Current Web3 Provider ', web3.currentProvider.connection._url);
   const accounts = await getEthereumAccounts(web3);
   if (web3) {
     let smartcontracts = getSmartContracts();

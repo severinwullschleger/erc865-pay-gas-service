@@ -7,20 +7,20 @@ import {deployContracts} from './deploy-contracts.mjs';
   the method returns a web3 instance of the smart contract itself.
  */
 export const deployContractsAndSaveAddressesAndABIs = async () => {
-  const [eurekaTokenContract, eurekaPlatformContract] = await deployContracts();
+  const [tokenContract, serviceContract] = await deployContracts();
 
   const fileNames = {
-    eurekaPlatform: {
-      addressPath: 'src/smartcontracts/constants/GanachePlatformContractAddress.json',
-      abiPath: 'src/smartcontracts/constants/GanachePlatformContractABI.json',
-      abi: JSON.stringify(eurekaPlatformContract._jsonInterface),
-      address: JSON.stringify(eurekaPlatformContract.options.address)
+    serviceContract: {
+      addressPath: 'src/smartcontracts/constants/GanacheServiceContractAddress.json',
+      abiPath: 'src/smartcontracts/constants/GanacheServiceContractABI.json',
+      abi: JSON.stringify(serviceContract._jsonInterface),
+      address: JSON.stringify(serviceContract.options.address)
     },
-    eurekaToken: {
+    tokenContract: {
       addressPath: 'src/smartcontracts/constants/GanacheTokenContractAddress.json',
       abiPath: 'src/smartcontracts/constants/GanacheTokenContractABI.json',
-      abi: JSON.stringify(eurekaTokenContract._jsonInterface),
-      address: JSON.stringify(eurekaTokenContract.options.address)
+      abi: JSON.stringify(tokenContract._jsonInterface),
+      address: JSON.stringify(tokenContract.options.address)
     }
   };
 
@@ -51,7 +51,7 @@ export const deployContractsAndSaveAddressesAndABIs = async () => {
       );
     })
   );
-  return [eurekaTokenContract, eurekaPlatformContract];
+  return [tokenContract, serviceContract];
 };
 
 
