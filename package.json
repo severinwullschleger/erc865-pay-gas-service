@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "chroma-js": "^2.0.2",
+    "express": "latest",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-ink": "^6.4.0",
@@ -29,5 +30,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "dotenv": "latest",
+    "nodemon": "^1.18.10"
+  }
 }
