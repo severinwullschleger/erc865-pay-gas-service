@@ -22,7 +22,7 @@ const getProvider = () => {
     process.exit(1);
   }
   provider.on('connect', (e) => {
-    console.log('Web3 Provider connected to ' + web3.currentProvider.host);
+    console.log('Web3 Provider connected to ' + web3.currentProvider.connection.url);
   });
   provider.on('error', e => {
     console.error('Web3 Provider Error', e);
