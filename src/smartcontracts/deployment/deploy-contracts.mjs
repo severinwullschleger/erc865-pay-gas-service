@@ -9,9 +9,9 @@ export const deployContracts = async () => {
   console.log('Current Web3 Provider ', web3.currentProvider.connection._url);
   const accounts = await getEthereumAccounts(web3);
   if (web3) {
-    let eurekaInput = getSmartContracts();
-    const addressMap = await deployLibraries(eurekaInput.libraries, accounts);
-    return deployContract(eurekaInput, addressMap, accounts);
+    let smartcontracts = getSmartContracts();
+    const addressMap = await deployLibraries(smartcontracts.libraries, accounts);
+    return deployContract(smartcontracts, addressMap, accounts);
   } else {
     console.log('Web3 Instance is not set!');
   }

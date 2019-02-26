@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import EurekaLogo from "./views/icons/EurekaLogo";
 import { __THIRD } from "./helpers/colors";
 import Icon from "./views/icons/Icon";
 
@@ -36,7 +35,6 @@ class App extends Component {
     return (
       <Container>
         <RelativeContainer>
-          <EurekaLogo width={500} />
           <Absolute>
             <Title>PDF Parser</Title>
             <Icon icon={"uploadPDF"} width={38} height={38} color={__THIRD} />
