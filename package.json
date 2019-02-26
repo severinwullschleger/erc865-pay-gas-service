@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start-server": "cross-env NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/backend"
   },
   "eslintConfig": {
     "extends": "react-app"
