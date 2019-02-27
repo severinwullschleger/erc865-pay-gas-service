@@ -1,4 +1,4 @@
-export const PLATFORM_KOVAN_ABI =
+export const SERVICE_KOVAN_ABI =
   [
     {
       'constant': false,
