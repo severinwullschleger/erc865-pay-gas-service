@@ -24,7 +24,7 @@
     "eject": "react-scripts eject",
     "start-server": "cross-env NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/backend",
     "deploy-contracts": "cross-env BC_NETWORK=ganache NODE_ENV=development node --experimental-modules src/smartcontracts/deployment/deployment-script.mjs",
-    "dev": "cross-env BC_NETWORK=ganache NODE_ENV=development node --experimental-modules src/dev-script.mjs"
+    "dev": "cross-env BC_NETWORK=ganache NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/dev-script.mjs"
   },
   "eslintConfig": {
     "extends": "react-app"
