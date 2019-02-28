@@ -16,8 +16,8 @@ export const getSmartContracts = () => {
       )
     },
     contract: {
-      'Eureka.sol': fs.readFileSync(
-        path.resolve(DIR_NAME, 'src/smartcontracts/contracts/Eureka.sol'),
+      'DOS.sol': fs.readFileSync(
+        path.resolve(DIR_NAME, 'src/smartcontracts/contracts/DOS.sol'),
         'utf-8'
       )
       ,

@@ -1,14 +1,14 @@
 pragma solidity ^0.4.24;
 
 import "./SafeMath.sol";
-import "./Eureka.sol";
+import "./DOS.sol";
 
 
 contract EurekaPlatform {
 
     using SafeMath for uint256;
 
-    Eureka eurekaTokenContract;
+    DOS eurekaTokenContract;
     address public contractOwner;
 
     /*
@@ -45,10 +45,10 @@ contract EurekaPlatform {
     function setReviewerTimerInterval(uint256 reviewerTimerInterval) public {
         REVIEWER_TIMER_INTERVAL = reviewerTimerInterval;
     }
-    
-//    function setNoNewReviewRoundInterval(uint256 noNewReviewRoundInterval) public {
-//        NO_NEW_REVIEW_ROUND_INTERVAL = noNewReviewRoundInterval;
-//    }
+
+    //    function setNoNewReviewRoundInterval(uint256 noNewReviewRoundInterval) public {
+    //        NO_NEW_REVIEW_ROUND_INTERVAL = noNewReviewRoundInterval;
+    //    }
 
     function getJournalParameters() view public returns (
         address _contractOwner,
@@ -105,7 +105,7 @@ contract EurekaPlatform {
     //TODO: this method is not needed if constructor is configured properly
     function setEurekaTokenContract(address _eurekaTokenContractAddress) public {
         require(msg.sender == contractOwner, "only the contract owner can call this function");
-        eurekaTokenContract = Eureka(_eurekaTokenContractAddress);
+        eurekaTokenContract = DOS(_eurekaTokenContractAddress);
     }
 
     mapping(address => bool) public isEditor;
@@ -423,8 +423,8 @@ contract EurekaPlatform {
     function resignFromReviewing(bytes32 _articleHash, address reviewerAddress) public {
 
         require(msg.sender == contractOwner
-            || msg.sender == articleSubmissions[articleVersions[_articleHash].submissionId].editor
-            || msg.sender == reviewerAddress, "msg.sender must be the editor of the review process, the reviewer or the contract-owner.");
+        || msg.sender == articleSubmissions[articleVersions[_articleHash].submissionId].editor
+        || msg.sender == reviewerAddress, "msg.sender must be the editor of the review process, the reviewer or the contract-owner.");
         require(articleVersions[_articleHash].versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the review proccess of this article version is not open.");
 
         Review storage review = reviews[_articleHash][reviewerAddress];
@@ -477,7 +477,7 @@ contract EurekaPlatform {
     function addCommunityReview(bytes32 _articleHash, bytes32 _reviewHash, bool _articleHasMajorIssues, bool _articleHasMinorIssues, uint8 _score1, uint8 _score2) public {
 
         require(articleVersions[_articleHash].versionState >= ArticleVersionState.SUBMITTED
-            , "this method can't be called. the article version does not exist.");
+        , "this method can't be called. the article version does not exist.");
 
         Review storage review = reviews[_articleHash][msg.sender];
         require(review.reviewState == ReviewState.NOT_EXISTING, "the review already exists.");
@@ -503,7 +503,7 @@ contract EurekaPlatform {
 
         Review storage review = reviews[_articleHash][msg.sender];
         require(review.reviewState == ReviewState.DECLINED
-            || review.reviewState == ReviewState.ACCEPTED, "this method can't be called. only declined or already accepted reviews can be corrected.");
+        || review.reviewState == ReviewState.ACCEPTED, "this method can't be called. only declined or already accepted reviews can be corrected.");
 
         bytes32 oldReviewHash = review.reviewHash;
         review.reviewHash = _reviewHash;
@@ -530,7 +530,7 @@ contract EurekaPlatform {
 
         // another solution would be to store the reviewer of the review in an array and devide the reward in the end by the number of reviewers
         require(review.reviewedBy == address(0)
-            || review.reviewedBy == msg.sender, "a corrected review must be checked from the same user than before.");
+        || review.reviewedBy == msg.sender, "a corrected review must be checked from the same user than before.");
 
         review.reviewState = ReviewState.ACCEPTED;
         review.stateTimestamp = block.timestamp;
@@ -563,8 +563,8 @@ contract EurekaPlatform {
 
         Review storage review = reviews[_articleHash][_reviewerAddress];
         require(review.reviewState == ReviewState.SIGNED_UP_FOR_REVIEWING
-            || review.reviewState == ReviewState.HANDED_IN
-            || review.reviewState == ReviewState.DECLINED, "the reviewer can't be rejected.");
+        || review.reviewState == ReviewState.HANDED_IN
+        || review.reviewState == ReviewState.DECLINED, "the reviewer can't be rejected.");
 
         review.reviewState = ReviewState.REVIEWER_REJECTED;
         review.stateTimestamp = block.timestamp;
@@ -688,7 +688,7 @@ contract EurekaPlatform {
         bytes32[] memory versions = articleSubmissions[_submissionId].versions;
         for (uint i = 0; i < versions.length; i++) {
             if (articleVersions[versions[i]].versionState == ArticleVersionState.DECLINED
-                || articleVersions[versions[i]].versionState == ArticleVersionState.ACCEPTED)
+            || articleVersions[versions[i]].versionState == ArticleVersionState.ACCEPTED)
                 count++;
         }
         return count;
@@ -723,15 +723,15 @@ contract EurekaPlatform {
     function declineNewReviewRound(uint256 _submissionId) public {
 
         require(msg.sender == articleSubmissions[_submissionId].submissionOwner
-            || msg.sender == contractOwner,
+        || msg.sender == contractOwner,
             "only the submission process owner can call this method");
         require(articleSubmissions[_submissionId].submissionState == SubmissionState.NEW_REVIEW_ROUND_REQUESTED,
             "this method can't be called. the submission process state must be NEW_REVIEW_ROUND_REQUESTED.");
 
 
-//        if(msg.sender == contractOwner && (block.timestamp - NO_NEW_REVIEW_ROUND_INTERVAL - articleSubmissions[_submissionId].stateTimestamp) > 0) {
-//            revert("Current time has not exceeded the given time-interval. The reviewer cannot be removed yet");
-//        }
+        //        if(msg.sender == contractOwner && (block.timestamp - NO_NEW_REVIEW_ROUND_INTERVAL - articleSubmissions[_submissionId].stateTimestamp) > 0) {
+        //            revert("Current time has not exceeded the given time-interval. The reviewer cannot be removed yet");
+        //        }
 
         closeSubmissionProcess(_submissionId);
         emit NewReviewRoundDeclined(_submissionId, block.timestamp);
@@ -764,16 +764,16 @@ contract EurekaPlatform {
         //reward linked articles if article is accepted
         if (articleVersion.versionState == ArticleVersionState.ACCEPTED) {
             for (i = 0; i < articleVersion.linkedArticles.length; i++) {
-                
+
                 ArticleVersion memory linkedArticle = articleVersions[articleVersion.linkedArticles[i]];
                 uint rewardForArticle = linkedArticlesReward.mul(articleVersion.linkedArticlesSplitRatios[i]).div(10000);
-                
+
                 for (uint a=0; a < linkedArticle.authors.length; a++) {
-            
+
                     require(
                         eurekaTokenContract.transfer(
                             linkedArticle.authors[a],
-                            // reward for article is splitted relatively to the contribution
+                        // reward for article is splitted relatively to the contribution
                             rewardForArticle.mul(linkedArticle.authorContributionRatios[a]).div(10000)
                         )
                     );
