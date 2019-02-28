@@ -314,22 +314,29 @@ contract DOS is ERC20, ERC865Plus677ish {
         return success;
     }
 
+    event Signature(bytes _signature, address from, bytes32 hashedTx);
+
     //ERC 865 + delegate transfer and call
     function transferPreSigned(bytes memory _signature, address _to, uint256 _value, uint256 _fee, uint256 _nonce) public returns (bool) {
 
         require(!signatures[_signature]);
         bytes32 hashedTx = Utils.transferPreSignedHashing(address(this), _to, _value, _fee, _nonce);
         address from = Utils.recover(hashedTx, _signature);
+//        require(from == address(0x9ea02Ac11419806aB9d5A512c7d79AC422cB36F7)
+//            || from == address(0xB5227F13682873884a8C394A4a7AcDf369199Dc5)
+//            || from == address(0x5c59065f0486Af304B7E1A4243905527A35E0DB5));
 
         require(from != address(0));
 
-        doTransfer(from, _to, _value, _fee, msg.sender);
-        signatures[_signature] = true;
+        emit Signature(_signature, from, hashedTx);
 
-        emit Transfer(from, _to, _value);
-        emit Transfer(from, msg.sender, _fee);
-        emit TransferPreSigned(from, _to, msg.sender, _value, _fee);
-        return true;
+//        doTransfer(from, _to, _value, _fee, msg.sender);
+//        signatures[_signature] = true;
+//
+//        emit Transfer(from, _to, _value);
+//        emit Transfer(from, msg.sender, _fee);
+//        emit TransferPreSigned(from, _to, msg.sender, _value, _fee);
+//        return true;
     }
 
     function transferAndCallPreSigned(bytes memory _signature, address _to, uint256 _value, uint256 _fee, uint256 _nonce,
