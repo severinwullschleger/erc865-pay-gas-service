@@ -1,5 +1,4 @@
-pragma solidity ^0.4.24;
-
+pragma solidity ^0.5.2;
 
 library Utils {
 
@@ -26,6 +25,7 @@ library Utils {
     }
 
     //From: https://github.com/PROPSProject/props-token-distribution/blob/master/contracts/token/ERC865Token.sol
+    //adapted to: https://solidity.readthedocs.io/en/v0.5.3/050-breaking-changes.html?highlight=abi%20encode
 
     /**
      * @notice Hash (keccak256) of the payload used by transferPreSigned
@@ -33,30 +33,37 @@ library Utils {
      * @param _to address The address which you want to transfer to.
      * @param _value uint256 The amount of tokens to be transferred.
      * @param _fee uint256 The amount of tokens paid to msg.sender, by the owner.
-     * @param _nonce uint256 Presigned transaction number.
      */
-    function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee,
-        uint256 _nonce, bytes4 _methodName, bytes _args) internal pure returns (bytes32) {
-        /* "dbe43fca": transferPreSignedHashing(address,address,address,uint256,uint256,uint256,bytes4,bytes) */
-        return keccak256(bytes4(0xdbe43fca), _token, _to, _value, _fee, _nonce, _methodName, _args);
+    function transferAndCallPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce,
+        bytes4 _methodName, bytes memory _args) internal pure returns (bytes32) {
+        /* "38980f82": transferAndCallPreSignedHashing(address,address,uint256,uint256,uint256,bytes4,bytes) */
+        return keccak256(abi.encode(bytes4(0x38980f82), _token, _to, _value, _fee, _nonce, _methodName, _args));
     }
 
-    function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee,
-        uint256 _nonce) internal pure returns (bytes32) {
-        /* "48664c16": transferPreSignedHashing(address,address,address,uint256,uint256,uint256) */
-        return keccak256(bytes4(0x48664c16), _token, _to, _value, _fee, _nonce);
+    function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
+    internal pure returns (bytes32) {
+        /* "15420b71": transferPreSignedHashing(address,address,uint256,uint256,uint256) */
+        return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
     }
+
+    //From: https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/cryptography/ECDSA.sol
 
     /**
     * @notice Recover signer address from a message by using his signature
     * @param hash bytes32 message, the hash is the signed message. What is recovered is the signer address.
     * @param sig bytes signature, the signature is generated using web3.eth.sign()
     */
-    function recover(bytes32 hash, bytes sig) internal pure returns (address) {bytes32 r; bytes32 s; uint8 v;
+    function recover(bytes32 hash, bytes memory sig) internal pure returns (address) {
+        //r is computed as the X coordinate of a point R, modulo the curve order n.
+        bytes32 r;
+        //s is (hash+rdA) / random number
+        bytes32 s;
+        //v is used for public key recovery: https://bitcoin.stackexchange.com/questions/38351/ecdsa-v-r-s-what-is-v
+        uint8 v;
 
         //Check the signature length
         if (sig.length != 65) {
-            return (address(0));
+            return address(0);
         }
 
         // Divide the signature in r, s and v variables
@@ -66,14 +73,20 @@ library Utils {
             v := byte(0, mload(add(sig, 96)))
         }
 
-        // Version of signature should be 27 or 28, but 0 and 1 are also possible versions
-        if (v < 27) {
-            v += 27;
+        //EIP-2 still allows signature malleabality, remove this possibility
+        if(uint256(s) > uint256(0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0)) {
+            return address(0);
         }
 
+        //removed the possibility of 0/1 in the signature, see:
+        //https://github.com/OpenZeppelin/openzeppelin-solidity/pull/1622
+        //https://github.com/ethereum/EIPs/issues/865
+
         // If the version is correct return the signer address
+        // see
+        // https://github.com/ethereum/go-ethereum/blob/master/core/types/transaction_signing.go#L195
         if (v != 27 && v != 28) {
-            return (address(0));
+            return address(0);
         } else {
             return ecrecover(hash, v, r, s);
         }
