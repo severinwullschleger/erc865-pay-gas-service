@@ -15,6 +15,15 @@ export const mintTokens = async (tokenContract) => {
   });
 };
 
+export const setAdmins = async (tokenContract) => {
+  const accounts = await getEthereumAccounts(web3);
+  const contractOwner = accounts[0];
+  return tokenContract.methods.setAdmin(accounts[0], accounts[1]).send({
+    from: contractOwner,
+    gas: 80000000
+  });
+};
+
 export const finishMinting = async (tokenContract) => {
   const accounts = await getEthereumAccounts(web3);
   const contractOwner = accounts[0];
