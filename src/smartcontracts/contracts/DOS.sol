@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.4.24;
 
 import "./SafeMath.sol";
 import "./Utils.sol";
@@ -43,7 +43,7 @@ contract ERC20 {
 
 contract ERC865Plus677ish {
     event TransferAndCall(address indexed _from, address indexed _to, uint256 _value, bytes4 _methodName, bytes _args);
-    function transferAndCall(address _to, uint256 _value, bytes4 _methodName, bytes memory _args) public returns (bytes memory);
+    function transferAndCall(address _to, uint256 _value, bytes4 _methodName, bytes memory _args) public returns (bool);
 
     event TransferPreSigned(address indexed _from, address indexed _to, address indexed _delegate,
         uint256 _amount, uint256 _fee);
@@ -53,7 +53,7 @@ contract ERC865Plus677ish {
     function transferPreSigned(bytes memory _signature, address _to, uint256 _value,
         uint256 _fee, uint256 _nonce) public returns (bool);
     function transferAndCallPreSigned(bytes memory _signature, address _to, uint256 _value,
-        uint256 _fee, uint256 _nonce, bytes4 _methodName, bytes memory _args) public returns (bytes memory);
+        uint256 _fee, uint256 _nonce, bytes4 _methodName, bytes memory _args) public returns (bool);
 }
 
 contract DOS is ERC20, ERC865Plus677ish {
@@ -301,7 +301,7 @@ contract DOS is ERC20, ERC865Plus677ish {
         return true;
     }
 
-    function transferAndCall(address _to, uint256 _value, bytes4 _methodName, bytes memory _args) public returns (bytes memory) {
+    function transferAndCall(address _to, uint256 _value, bytes4 _methodName, bytes memory _args) public returns (bool) {
         require(transfer(_to, _value));
 
         emit TransferAndCall(msg.sender, _to, _value, _methodName, _args);
@@ -309,9 +309,9 @@ contract DOS is ERC20, ERC865Plus677ish {
         // call receiver
         require(Utils.isContract(_to));
 
-        (bool success, bytes memory data) = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, msg.sender, _value), _args));
+        bool success = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, msg.sender, _value), _args));
         require(success);
-        return data;
+        return success;
     }
 
     //ERC 865 + delegate transfer and call
@@ -333,7 +333,7 @@ contract DOS is ERC20, ERC865Plus677ish {
     }
 
     function transferAndCallPreSigned(bytes memory _signature, address _to, uint256 _value, uint256 _fee, uint256 _nonce,
-        bytes4 _methodName, bytes memory _args) public returns (bytes memory) {
+        bytes4 _methodName, bytes memory _args) public returns (bool) {
 
         require(!signatures[_signature]);
         bytes32 hashedTx = Utils.transferAndCallPreSignedHashing(address(this), _to, _value, _fee, _nonce, _methodName, _args);
@@ -352,8 +352,8 @@ contract DOS is ERC20, ERC865Plus677ish {
         require(Utils.isContract(_to));
 
         //call on behalf of from and not msg.sender
-        (bool success, bytes memory data) = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, from, _value), _args));
+        bool success = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, from, _value), _args));
         require(success);
-        return data;
+        return success;
     }
 }
