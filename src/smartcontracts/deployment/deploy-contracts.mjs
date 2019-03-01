@@ -2,7 +2,7 @@ import solc from 'solc';
 import web3 from '../../helpers/web3Instance.mjs';
 import linker from 'solc/linker';
 import getEthereumAccounts from '../../helpers/get-ethereum-accounts.mjs';
-import getSmartContracts from './get-smart-contracts.mjs';
+import getSmartContracts, {findImports} from './get-smart-contracts.mjs';
 
 
 export const deployContracts = async () => {
@@ -48,12 +48,13 @@ export const deployContract = async (contractInput, addressMap, accounts) => {
   );
 };
 
-export const deployLibraries = async (libraries, accounts) => {
-  const compiledLibraries = solc.compile({sources: libraries}, 1);
+export const deployLibraries = async (librariesInput, accounts) => {
+  const compiledLibraries = JSON.parse(solc.compile(JSON.stringify(librariesInput), findImports));
+  console.log(compiledLibraries);
   let addressMap = new Map();
   await Promise.all(
-    Object.keys(libraries).map(async libraryName => {
-      const web3Contract = getWeb3Contract(libraryName, compiledLibraries);
+    Object.keys(compiledLibraries.contracts).map(async libraryName => {
+      const web3Contract = getWeb3Contract(libraryName, compiledLibraries.contracts[libraryName]);
       const bytecode = web3Contract.options.data;
 
       const contract = await deploy(
@@ -71,9 +72,10 @@ export const deployLibraries = async (libraries, accounts) => {
 };
 
 const getWeb3Contract = (cName, compiledContract) => {
-  const pattern = cName.toString() + ':' + cName.split('.')[0];
-  const contract = compiledContract.contracts[pattern];
-  const web3Contract = new web3.eth.Contract(JSON.parse(contract.interface));
+  const pattern = cName.split('.')[0];
+  const contract = compiledContract[pattern];
+  console.log(contract);
+  let web3Contract = new web3.eth.Contract(contract.abi);
   web3Contract.options.data = contract.bytecode;
   return web3Contract;
 };
@@ -81,10 +83,10 @@ const getWeb3Contract = (cName, compiledContract) => {
 const deploy = async (web3Contract, bytecode, accounts, contractName) => {
   const gasEstimated = await web3.eth.estimateGas({data: bytecode});
   web3Contract.options.data = bytecode;
-  web3Contract.options.gas = gasEstimated;
-  web3Contract.options.from = accounts[0];
+  // web3Contract.options.gas = gasEstimated;
+  // web3Contract.options.from = accounts[0];
   return web3Contract
-    .deploy({data: bytecode})
+    .deploy()
     .send({
       from: accounts[0],
       gas: gasEstimated
