@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import dotenv from "dotenv";
+import {isProduction} from "./isProduction.mjs";
 let web3;
 
 const getWeb3Instance = () => {
@@ -7,6 +9,11 @@ const getWeb3Instance = () => {
 };
 
 const getProvider = () => {
+
+  if (!isProduction()) {
+    dotenv.config();  //import env variables from .env file
+  }
+
   let provider;
   if (process.env.BC_NETWORK === 'main') {
     provider = new Web3.providers.WebsocketProvider('wss://infura.io/ws');
