@@ -26,7 +26,6 @@ const startApplication = () => {
   app.use(bodyParser.json());
 
   app.use(cors({
-    credentials: true,
     origin: [
       'http://localhost:3000',
       'https://erc865-pay-gas-service.herokuapp.com'
