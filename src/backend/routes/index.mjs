@@ -1,13 +1,13 @@
 import express from 'express';
 import {requestHandler} from "./requestHandler.mjs";
+import {sendTransferPreSignedTransaction} from "../services/transfer.mjs";
 
 const router = express.Router();
 
-router.get(
+router.post(
   '/transfer',
   requestHandler(async req => {
-    console.log("hi");
-    // return sendTransferPreSignedTransaction(req.body);
+    return sendTransferPreSignedTransaction(req.body);
   })
 );
 
