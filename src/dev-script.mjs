@@ -66,14 +66,9 @@ const run = async () => {
     Buffer.from("3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f", "hex")
   );
   console.log(signObj);
-  console.log(signObj.signature.toString('hex'));
 
   let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
   console.log(signatureInHex);
-
-  let eventSig;
-  let hashedTx;
-  let from;
 
   await tokenContract.methods.transferPreSigned(
     signatureInHex,
@@ -88,15 +83,7 @@ const run = async () => {
     })
     .then((receipt) => {
       console.log("transferPreSigned call successful");
-      eventSig = receipt.events.Signature.returnValues._signature;
-      hashedTx = receipt.events.Signature.returnValues.hashedTx;
-      from = receipt.events.Signature.returnValues.from;
     });
-
-  console.log(eventSig === signatureInHex);
-  console.log(hashedTx === toSignHexString);
-  console.log("from: " + from);
-  console.log(from === accounts[1]);
 };
 
 run();
