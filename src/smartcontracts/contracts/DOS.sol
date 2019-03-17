@@ -50,9 +50,9 @@ contract ERC865Plus677ish {
     event TransferAndCallPreSigned(address indexed _from, address indexed _to, address indexed _delegate,
         uint256 _amount, uint256 _fee, bytes4 _methodName, bytes _args);
 
-    function transferPreSigned(bytes memory _signature, address _to, uint256 _value,
+    function transferPreSigned(bytes memory _signature, address _from, address _to, uint256 _value,
         uint256 _fee, uint256 _nonce) public returns (bool);
-    function transferAndCallPreSigned(bytes memory _signature, address _to, uint256 _value,
+    function transferAndCallPreSigned(bytes memory _signature, address _from, address _to, uint256 _value,
         uint256 _fee, uint256 _nonce, bytes4 _methodName, bytes memory _args) public returns (bool);
 }
 
@@ -315,12 +315,16 @@ contract DOS is ERC20, ERC865Plus677ish {
     }
 
     //ERC 865 + delegate transfer and call
-    function transferPreSigned(bytes memory _signature, address _to, uint256 _value, uint256 _fee, uint256 _nonce) public returns (bool) {
+    function transferPreSigned(bytes memory _signature, address _from, address _to, uint256 _value, uint256 _fee, uint256 _nonce) public returns (bool) {
 
         require(!signatures[_signature]);
         bytes32 hashedTx = Utils.transferPreSignedHashing(address(this), _to, _value, _fee, _nonce);
         address from = Utils.recover(hashedTx, _signature);
 
+//         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
+//         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
+//         signature is equal the specified one
+        require(from == _from);
         require(from != address(0));
 
         doTransfer(from, _to, _value, _fee, msg.sender);
@@ -332,13 +336,17 @@ contract DOS is ERC20, ERC865Plus677ish {
         return true;
     }
 
-    function transferAndCallPreSigned(bytes memory _signature, address _to, uint256 _value, uint256 _fee, uint256 _nonce,
+    function transferAndCallPreSigned(bytes memory _signature, address _from, address _to, uint256 _value, uint256 _fee, uint256 _nonce,
         bytes4 _methodName, bytes memory _args) public returns (bool) {
 
         require(!signatures[_signature]);
         bytes32 hashedTx = Utils.transferAndCallPreSignedHashing(address(this), _to, _value, _fee, _nonce, _methodName, _args);
         address from = Utils.recover(hashedTx, _signature);
 
+//         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
+//         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
+//         signature is equal the specified one
+        require(from == _from);
         require(from != address(0));
 
         doTransfer(from, _to, _value, _fee, msg.sender);
