@@ -69,24 +69,24 @@ const run = async () => {
   console.log(signObj);
 
   let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
-  console.log(signatureInHex);
+  console.log("signature in hex: " + signatureInHex);
 
-  await tokenContract.methods.transferPreSigned(
-    signatureInHex,
-    accounts[1],
-    accounts[2],
-    500,
-    5,
-    nonce
-  )
-    .send({
-      from: accounts[0],
-      gas: 80000000
-    })
-    .then((receipt) => {
-      console.log("500 tokens transferred from account 1 to account 2\n" +
-        "Transaction sent by account 0: Fee of 5 tokens transferred from account 1 to account 0");
-    });
+  // await tokenContract.methods.transferPreSigned(
+  //   signatureInHex,
+  //   accounts[1],
+  //   accounts[2],
+  //   500,
+  //   5,
+  //   nonce
+  // )
+  //   .send({
+  //     from: accounts[0],
+  //     gas: 80000000
+  //   })
+  //   .then((receipt) => {
+  //     console.log("500 tokens transferred from account 1 to account 2\n" +
+  //       "Transaction sent by account 0: Fee of 5 tokens transferred from account 1 to account 0");
+  //   });
 
   await getTokenBalance(tokenContract, accounts[0], accounts[0])
     .then((balance) => {
