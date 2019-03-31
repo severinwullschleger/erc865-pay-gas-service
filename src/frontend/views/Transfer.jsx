@@ -33,7 +33,7 @@ const TitleRow = styled(RowCentered)`
 `;
 
 const LeftComponent = styled.div`
-  width: 70px;
+  width: 160px;
   margin-right: 10px;
 `;
 
@@ -49,7 +49,6 @@ const AddressInputField = styled(InputField)`
 const AmountContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 5px;
 `;
 
 const Fee = styled.span`
@@ -89,8 +88,10 @@ class Transfer extends Component {
         </TitleRow>
         <FormContainer>
           <RowCentered>
+            <LeftComponent>
             <AmountInput
               placeholder={"Amount"}/>
+            </LeftComponent>
             DOS tokens
           </RowCentered>
           <RowCentered>
@@ -108,7 +109,9 @@ class Transfer extends Component {
               placeholder={"To Address"}/>
           </RowCentered>
           <Row>
-            pay transaction cost with{' '}
+            <LeftComponent>
+            transaction costs:
+            </LeftComponent>
             <AmountContainer>
               <div>
                 <Fee>5</Fee> DOS
