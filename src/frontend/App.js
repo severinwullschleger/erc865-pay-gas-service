@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { __THIRD } from "./helpers/colors";
 import Icon from "./views/icons/Icon";
+import {InputField} from "./views/design-components/Inputs.js";
+import Button from "./views/design-components/Button.js";
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +13,7 @@ const Container = styled.div`
 
 const RelativeContainer = styled.div`
   position: relative;
-  margin-top: 30px;
+  margin-top: 70px;
 `;
 
 const Title = styled.h1`
@@ -28,7 +30,67 @@ const Absolute = styled.div`
   align-items: center;
 `;
 
-const SubContainer = styled.div``;
+const FormContainer = styled.div`
+
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+`;
+
+const RowCentered = styled(Row)`
+  align-items: center;    //vertical  alignment
+`;
+
+const LeftComponent = styled.div`
+  width: 70px;
+  margin-right: 10px;
+`;
+
+const AmountInput = styled(InputField)`
+  width: 150px;
+  margin-right: 10px;
+`;
+
+const AddressInputField = styled(InputField)`
+  width: 370px  ;
+`;
+
+const AmountContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px;
+`;
+
+const Fee = styled.span`
+  font-style: italic;
+  margin-left: 5px;
+  margin-right: 5px;
+`;
+
+const Padded = styled.div`
+  padding-left: 8px;
+`;
+
+const PKInputField = styled(InputField)`
+  width: 540px;
+`;
+
+const PrivateKeyInfo = styled.div`
+  font-style: italic;
+  margin-left: 10px;
+  font-size: 10px;
+  line-height: 1.6;
+  margin-top: 3px;
+`;
+
+const RowMultiLines = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+`;
 
 class App extends Component {
   render() {
@@ -36,11 +98,54 @@ class App extends Component {
       <Container>
         <RelativeContainer>
           <Absolute>
-            <Title>PDF Parser</Title>
-            <Icon icon={"uploadPDF"} width={38} height={38} color={__THIRD} />
+            <Title>Transfer</Title>
           </Absolute>
         </RelativeContainer>
-        <SubContainer>Let's start!</SubContainer>
+        <FormContainer>
+          <RowCentered>
+              <AmountInput
+                placeholder={"Amount"}/>
+            DOS tokens
+          </RowCentered>
+          <RowCentered>
+            <LeftComponent>
+            From:
+            </LeftComponent>
+            <AddressInputField
+              placeholder={"From Address"}/>
+          </RowCentered>
+          <RowCentered>
+            <LeftComponent>
+            To:
+          </LeftComponent>
+            <AddressInputField
+              placeholder={"To Address"}/>
+          </RowCentered>
+          <Row>
+            pay transaction cost with{' '}
+            <AmountContainer>
+              <div>
+                <Fee>5</Fee> DOS
+              </div>
+              <Padded>
+                {'≈'}<Fee>0.20</Fee> ETH
+              </Padded>
+              <Padded>
+                {'≈'}<Fee>0.20</Fee> USD
+              </Padded>
+            </AmountContainer>
+          </Row>
+          <RowMultiLines>
+            <PKInputField
+              placeholder={"Private key of the from address"}/>
+              <PrivateKeyInfo>
+                Your private key is only used to sign the entered transation data. It is neither stored nor send somewhere.
+              </PrivateKeyInfo>
+          </RowMultiLines>
+          <Button>
+            Send
+          </Button>
+        </FormContainer>
       </Container>
     );
   }
