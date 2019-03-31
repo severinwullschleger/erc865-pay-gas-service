@@ -80,6 +80,24 @@ const RowMultiLines = styled.div`
 `;
 
 class Transfer extends Component {
+  constructor() {
+    super();
+    this.state = {
+      tokenAddress: null,
+      signature: null,
+      from: null,
+      to: null,
+      value: null,
+      fee: null,
+      nonce: null,
+      privateKey: null
+    }
+  }
+
+  componentDidMount() {
+    this.setState({fee: 5})
+  }
+
   render() {
     return (
       <Container>
@@ -90,7 +108,9 @@ class Transfer extends Component {
           <RowCentered>
             <LeftComponent>
             <AmountInput
-              placeholder={"Amount"}/>
+              placeholder={"Amount"}
+              value={this.state.value}
+            />
             </LeftComponent>
             DOS tokens
           </RowCentered>
@@ -99,14 +119,18 @@ class Transfer extends Component {
               From:
             </LeftComponent>
             <AddressInputField
-              placeholder={"From Address"}/>
+              placeholder={"From Address"}
+              value={this.state.from}
+            />
           </RowCentered>
           <RowCentered>
             <LeftComponent>
               To:
             </LeftComponent>
             <AddressInputField
-              placeholder={"To Address"}/>
+              placeholder={"To Address"}
+              value={this.state.to}
+            />
           </RowCentered>
           <Row>
             <LeftComponent>
@@ -114,7 +138,9 @@ class Transfer extends Component {
             </LeftComponent>
             <AmountContainer>
               <div>
-                <Fee>5</Fee> DOS
+                <Fee>
+                  {this.state.fee}
+                </Fee> DOS
               </div>
               <Padded>
                 {'≈'}<Fee>0.20</Fee> ETH
@@ -126,7 +152,9 @@ class Transfer extends Component {
           </Row>
           <RowMultiLines>
             <PKInputField
-              placeholder={"Private key of the from address"}/>
+              placeholder={"Private key of the from address"}
+              value={this.state.privateKey}
+            />
             <PrivateKeyInfo>
               Your private key is only used to sign the entered transation data. It is neither stored nor send somewhere.
             </PrivateKeyInfo>
