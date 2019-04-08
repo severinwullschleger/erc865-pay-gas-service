@@ -1,7 +1,10 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import styled from "styled-components";
 import {InputField} from "./design-components/Inputs.js";
 import Button from "./design-components/Button.js";
+import secp256k1 from "secp256k1";
+import {Web3Context} from '../contexts/Web3Context';
+import {getDomain} from "../../helpers/getDomain.mjs";
 
 const Container = styled.div`
   display: flex;
@@ -95,75 +98,155 @@ class Transfer extends Component {
   }
 
   componentDidMount() {
-    this.setState({fee: 5})
+    this.setState({
+      fee: 5,
+      nonce: 0
+      // testing purposes
+      ,
+      value: 400,
+      from: '0x9ea02Ac11419806aB9d5A512c7d79AC422cB36F7',
+      to: '0xB5227F13682873884a8C394A4a7AcDf369199Dc5',
+      privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f'
+    })
+  }
+
+  handleInput(stateKey, e) {
+    this.setState({[stateKey]: e.target.value})
+  }
+
+  signTransactionData(web3Context) {
+    let nonce = Date.now();
+    // transferPreSignedHashing from Utils.sol
+    // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
+    //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
+    let input = web3Context.web3.eth.abi.encodeParameters(
+      ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
+      ['0x15420b71',
+        web3Context.tokenContract.options.address,
+        this.state.to,
+        this.state.value.toString(),
+        this.state.fee.toString(),
+        nonce.toString()]);
+    console.log(input);
+
+    let inputHash = web3Context.web3.utils.keccak256(input);
+    let privateKey;
+    if (this.state.privateKey.substring(0, 2) === "0x")
+      privateKey = this.state.privateKey.substring(2);
+    else
+      privateKey = this.state.privateKey;
+
+
+    const signObj = secp256k1.sign(
+      Buffer.from(inputHash.substring(2), "hex"),
+      // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
+      Buffer.from(privateKey, "hex")
+    );
+    console.log(signObj);
+
+    let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
+
+    this.setState({
+      signature: signatureInHex,
+      nonce,
+      tokenAddress: web3Context.tokenContract.options.address
+    });
+  }
+
+  sendSignedTransaction() {
+    console.log(this.state);
+
+    fetch(`${getDomain()}/api/transfer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state)
+    });
   }
 
   render() {
     return (
-      <Container>
-        <TitleRow>
-            <Title>Transfer tokens</Title>
-        </TitleRow>
-        <FormContainer>
-          <RowCentered>
-            <LeftComponent>
-            <AmountInput
-              placeholder={"Amount"}
-              value={this.state.value}
-            />
-            </LeftComponent>
-            DOS tokens
-          </RowCentered>
-          <RowCentered>
-            <LeftComponent>
-              From:
-            </LeftComponent>
-            <AddressInputField
-              placeholder={"From Address"}
-              value={this.state.from}
-            />
-          </RowCentered>
-          <RowCentered>
-            <LeftComponent>
-              To:
-            </LeftComponent>
-            <AddressInputField
-              placeholder={"To Address"}
-              value={this.state.to}
-            />
-          </RowCentered>
-          <Row>
-            <LeftComponent>
-            transaction costs:
-            </LeftComponent>
-            <AmountContainer>
-              <div>
-                <Fee>
-                  {this.state.fee}
-                </Fee> DOS
-              </div>
-              <Padded>
-                {'≈'}<Fee>0.20</Fee> ETH
-              </Padded>
-              <Padded>
-                {'≈'}<Fee>0.20</Fee> USD
-              </Padded>
-            </AmountContainer>
-          </Row>
-          <RowMultiLines>
-            <PKInputField
-              placeholder={"Private key of the from address"}
-              value={this.state.privateKey}
-            />
-            <PrivateKeyInfo>
-              Your private key is only used to sign the entered transation data. It is neither stored nor send somewhere.
-            </PrivateKeyInfo>
-          </RowMultiLines>
-          <Button>
-            Send
-          </Button>
-        </FormContainer>
-      </Container>
+      <Web3Context.Consumer>
+        {web3Context => {
+          return (
+            <Container>
+              <TitleRow>
+                <Title>Transfer tokens</Title>
+              </TitleRow>
+              <FormContainer>
+                <RowCentered>
+                  <LeftComponent>
+                    <AmountInput
+                      placeholder={"Amount"}
+                      value={this.state.value}
+                      onChange={e => this.handleInput('value', e)}
+                    />
+                  </LeftComponent>
+                  DOS tokens
+                </RowCentered>
+                <RowCentered>
+                  <LeftComponent>
+                    From:
+                  </LeftComponent>
+                  <AddressInputField
+                    placeholder={"From Address"}
+                    value={this.state.from}
+                    onChange={e => this.handleInput('from', e)}
+                  />
+                </RowCentered>
+                <RowCentered>
+                  <LeftComponent>
+                    To:
+                  </LeftComponent>
+                  <AddressInputField
+                    placeholder={"To Address"}
+                    value={this.state.to}
+                    onChange={e => this.handleInput('to', e)}
+                  />
+                </RowCentered>
+                <Row>
+                  <LeftComponent>
+                    transaction costs:
+                  </LeftComponent>
+                  <AmountContainer>
+                    <div>
+                      <Fee>
+                        {this.state.fee}
+                      </Fee> DOS
+                    </div>
+                    <Padded>
+                      {'≈'}<Fee>0.20</Fee> ETH
+                    </Padded>
+                    <Padded>
+                      {'≈'}<Fee>0.20</Fee> USD
+                    </Padded>
+                  </AmountContainer>
+                </Row>
+                <RowMultiLines>
+                  <PKInputField
+                    placeholder={"Private key of the from address"}
+                    value={this.state.privateKey}
+                    onChange={e => this.handleInput('privateKey', e)}
+                  />
+                  <PrivateKeyInfo>
+                    Your private key is only used to sign the entered transation data. It is neither stored nor send
+                    somewhere.
+                  </PrivateKeyInfo>
+                </RowMultiLines>
+                <Button
+                  onClick={async () => {
+                    console.log(this.state);
+                    await this.signTransactionData(web3Context);
+                    this.sendSignedTransaction();
+                  }}>
+                  Send
+                </Button>
+              </FormContainer>
+            </Container>
+          );
+        }}
+      </Web3Context.Consumer>
     );
   }
 }
