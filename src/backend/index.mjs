@@ -44,8 +44,7 @@ const startApplication = () => {
   }
 
   app.listen(process.env.PORT || 8080, () => {
-    console.log('App started. Date: ' + new Date().toString()
-      + '\nApp listens on port ' + process.env.PORT + '.');
+    console.log('App started. Date: ' + new Date().toString());
   });
 };
 
