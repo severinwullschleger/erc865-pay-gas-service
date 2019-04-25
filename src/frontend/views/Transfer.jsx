@@ -12,13 +12,9 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h1`
-  font-family: "Indie Flower", cursive;
-  font-size: 38px;
-`;
-
 const FormContainer = styled.div`
-
+  display: flex;
+  flex-direction: column;
 `;
 
 const Row = styled.div`
@@ -31,22 +27,20 @@ const RowCentered = styled(Row)`
   align-items: center;    //vertical  alignment
 `;
 
-const TitleRow = styled(RowCentered)`
-  margin-top: 20px;
-`;
-
 const LeftComponent = styled.div`
-  width: 160px;
+  width: 40%;
+  max-width: 160px;
   margin-right: 10px;
 `;
 
 const AmountInput = styled(InputField)`
-  width: 150px;
+  max-width: 150px;
   margin-right: 10px;
 `;
 
 const AddressInputField = styled(InputField)`
-  width: 370px  ;
+  width: 100%;
+  max-width: 370px;
 `;
 
 const AmountContainer = styled.div`
@@ -65,7 +59,8 @@ const Padded = styled.div`
 `;
 
 const PKInputField = styled(InputField)`
-  width: 540px;
+  //width: 100%;
+  max-width: 540px;
 `;
 
 const PrivateKeyInfo = styled.div`
@@ -80,6 +75,11 @@ const RowMultiLines = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 20px;
+`;
+
+const WideButton = styled(Button)`
+  width: 100%;
+  margin-top: 35px;
 `;
 
 class Transfer extends Component {
@@ -171,9 +171,6 @@ class Transfer extends Component {
         {web3Context => {
           return (
             <Container>
-              <TitleRow>
-                <Title>Transfer tokens</Title>
-              </TitleRow>
               <FormContainer>
                 <RowCentered>
                   <LeftComponent>
@@ -234,14 +231,14 @@ class Transfer extends Component {
                     somewhere.
                   </PrivateKeyInfo>
                 </RowMultiLines>
-                <Button
+                <WideButton
                   onClick={async () => {
                     console.log(this.state);
                     await this.signTransactionData(web3Context);
                     this.sendSignedTransaction();
                   }}>
                   Send
-                </Button>
+                </WideButton>
               </FormContainer>
             </Container>
           );
