@@ -19,7 +19,8 @@
     "styled-components": "^4.1.3",
     "web3": "1.0.0-beta.37",
     "body-parser": "latest",
-    "cors": "latest"
+    "cors": "latest",
+    "web3-core-promievent": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
