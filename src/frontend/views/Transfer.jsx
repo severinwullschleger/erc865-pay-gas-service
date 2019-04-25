@@ -15,6 +15,7 @@ const Container = styled.div`
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 512px;
 `;
 
 const Row = styled.div`
@@ -28,19 +29,16 @@ const RowCentered = styled(Row)`
 `;
 
 const LeftComponent = styled.div`
-  width: 40%;
-  max-width: 160px;
+  width: 18%;
   margin-right: 10px;
 `;
 
 const AmountInput = styled(InputField)`
-  max-width: 150px;
   margin-right: 10px;
 `;
 
 const AddressInputField = styled(InputField)`
   width: 100%;
-  max-width: 370px;
 `;
 
 const AmountContainer = styled.div`
@@ -59,8 +57,6 @@ const Padded = styled.div`
 `;
 
 const PKInputField = styled(InputField)`
-  //width: 100%;
-  max-width: 540px;
 `;
 
 const PrivateKeyInfo = styled.div`
@@ -78,7 +74,6 @@ const RowMultiLines = styled.div`
 `;
 
 const WideButton = styled(Button)`
-  width: 100%;
   margin-top: 35px;
 `;
 
@@ -162,7 +157,13 @@ class Transfer extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(this.state)
-    });
+    })
+      .then( result => {
+        console.log(result);
+      })
+      .catch( err => {
+        console.log("something went wrong: ", err)
+      });
   }
 
   render() {
@@ -204,7 +205,7 @@ class Transfer extends Component {
                 </RowCentered>
                 <Row>
                   <LeftComponent>
-                    transaction costs:
+                    Transaction costs:
                   </LeftComponent>
                   <AmountContainer>
                     <div>
