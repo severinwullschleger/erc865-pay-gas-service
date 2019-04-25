@@ -4,8 +4,11 @@
   "private": true,
   "author": "severinwullschleger",
   "dependencies": {
+    "body-parser": "latest",
     "chroma-js": "^2.0.2",
+    "cors": "latest",
     "express": "latest",
+    "mongodb": "^3.2.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-ink": "^6.4.0",
@@ -18,8 +21,6 @@
     "solc": "0.4.24",
     "styled-components": "^4.1.3",
     "web3": "1.0.0-beta.37",
-    "body-parser": "latest",
-    "cors": "latest",
     "web3-core-promievent": "latest"
   },
   "scripts": {

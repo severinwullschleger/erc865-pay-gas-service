@@ -5,13 +5,27 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import router from "./routes/index.mjs";
 import path from "path";
+import mongodb from "mongodb";
 
 const __dirname = path.resolve();
 
-const startApplication = () => {
+export let db;
+const MongoClient = mongodb.MongoClient;
+
+const startApplication = async () => {
   if (!isProduction()) {
     dotenv.config();  //import env variables from .env file
   }
+
+  await MongoClient.connect(process.env.MONGODB_URI)
+    .then(client => {
+      db = client.db('heroku_g621jvzr');
+      console.log('Connected to database.');
+    })
+    .catch(err => {
+      console.log(err);
+      process.exit(1);
+    });
 
   const app = express();
 
