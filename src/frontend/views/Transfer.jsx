@@ -158,8 +158,9 @@ class Transfer extends Component {
       },
       body: JSON.stringify(this.state)
     })
-      .then( result => {
-        console.log(result);
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
       })
       .catch( err => {
         console.log("something went wrong: ", err)
