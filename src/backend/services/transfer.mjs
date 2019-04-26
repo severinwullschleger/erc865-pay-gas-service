@@ -1,14 +1,12 @@
 import {tokenContract} from "../../helpers/get-deployed-smart-contracts.mjs";
 import getEthereumAccounts from "../../helpers/get-ethereum-accounts.mjs";
 import web3 from "../../helpers/web3Instance.mjs";
-import {getTokenBalance} from "../../smartcontracts/methods/token-balances.mjs";
 import Web3PromiEvent from "web3-core-promievent";
-
+import {saveTransaction, updateTransaction} from "../db/transactions-services.mjs";
+import {TRANSACTION_STATUS} from "../db/transaction-states.mjs";
 
 
 export const sendTransferPreSignedTransaction = async (transactionObject) => {
-
-  let accounts = await getEthereumAccounts(web3);
 
   let promiEvent = Web3PromiEvent();
 
@@ -24,31 +22,21 @@ export const sendTransferPreSignedTransaction = async (transactionObject) => {
       from: "0x5c59065f0486Af304B7E1A4243905527A35E0DB5",
       gas: 80000000
     })
-    .on('transactionHash', tx => {
+    .on('transactionHash', async tx => {
       promiEvent.eventEmitter.emit('transactionHash', tx);
+      promiEvent.resolve(tx);
+
+      saveTransaction(tx, transactionObject, config.unlockedServiceAccount);
     })
     .on('receipt', async receipt => {
-
       promiEvent.eventEmitter.emit('receipt', receipt);
-      promiEvent.resolve(receipt);
 
-      console.log("500 tokens transferred from account 1 to account 2\n" +
-        "Transaction sent by account 0: Fee of 5 tokens transferred from account 1 to account 0");
+      updateTransaction(
+        receipt.transactionHash,
+        receipt.status === true ? TRANSACTION_STATUS.CONFIRMED_SUCCESS : TRANSACTION_STATUS.CONFIRMED_REVERTED,
+        receipt
+      );
 
-      await getTokenBalance(tokenContract, accounts[0], accounts[0])
-        .then((balance) => {
-          console.log("Account 0 has balance " + balance);
-        });
-
-      await getTokenBalance(tokenContract, accounts[1], accounts[1])
-        .then((balance) => {
-          console.log("Account 1 has balance " + balance);
-        });
-
-      await getTokenBalance(tokenContract, accounts[2], accounts[2])
-        .then((balance) => {
-          console.log("Account 2 has balance " + balance);
-        });
     });
 
   return promiEvent.eventEmitter;
