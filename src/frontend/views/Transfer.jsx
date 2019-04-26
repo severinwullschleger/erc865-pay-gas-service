@@ -149,14 +149,18 @@ class Transfer extends Component {
   }
 
   sendSignedTransaction() {
-    console.log(this.state);
+
+    let transactionObject = this.state;
+    delete transactionObject.privateKey;
+
+    console.log ("sending this object: ", transactionObject);
 
     fetch(`${getDomain()}/api/transfer`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.state)
+      body: JSON.stringify(transactionObject)
     })
       .then(response => response.json())
       .then(response => {
@@ -235,7 +239,6 @@ class Transfer extends Component {
                 </RowMultiLines>
                 <WideButton
                   onClick={async () => {
-                    console.log(this.state);
                     await this.signTransactionData(web3Context);
                     this.sendSignedTransaction();
                   }}>
