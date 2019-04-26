@@ -41,3 +41,5 @@ export const Web3Context = React.createContext({
   tokenContract,
   provider
 });
+
+//TODO: add service contract and token contract list and consider config file
