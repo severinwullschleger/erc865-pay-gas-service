@@ -4,6 +4,7 @@ import web3 from "../../helpers/web3Instance.mjs";
 import Web3PromiEvent from "web3-core-promievent";
 import {saveTransaction, updateTransaction} from "../db/transactions-services.mjs";
 import {TRANSACTION_STATUS} from "../db/transaction-states.mjs";
+import config from "../../../config.json"
 
 
 export const sendTransferPreSignedTransaction = async (transactionObject) => {
@@ -19,7 +20,7 @@ export const sendTransferPreSignedTransaction = async (transactionObject) => {
     transactionObject.nonce.toString()
   )
     .send({
-      from: "0x5c59065f0486Af304B7E1A4243905527A35E0DB5",
+      from: config.unlockedServiceAccount,
       gas: 80000000
     })
     .on('transactionHash', async tx => {
