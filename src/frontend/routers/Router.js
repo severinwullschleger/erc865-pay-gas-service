@@ -4,6 +4,7 @@ import {Redirect, BrowserRouter, Switch, Route} from 'react-router-dom';
 import NavPill from '../views/design-components/NavPill.js';
 import {NavPillRoutes} from './NavPillRoutes.js';
 import Transfer from "../views/Transfer.jsx";
+import TransferAndCall from "../views/TransferAndCall.jsx";
 
 const Parent = styled.div`
   display: flex;
@@ -68,7 +69,7 @@ export class Router extends Component {
                   exact
                   path={`${this.props.base}/transferAndCall`}
                   render={() => (
-                    <Transfer base={`${this.props.base}/transferAndCall`}/>
+                    <TransferAndCall base={`${this.props.base}/transferAndCall`}/>
                   )}
                 />
 
