@@ -6,6 +6,8 @@ import secp256k1 from "secp256k1";
 import {Web3Context} from '../contexts/Web3Context';
 import {getDomain} from "../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
+import Select from 'react-select';
+import {__GRAY_200, __THIRD} from "../helpers/colors.js";
 
 const Container = styled.div`
   display: flex;
@@ -81,6 +83,15 @@ const WideButton = styled(Button)`
   `}
 `;
 
+const CustomSelect = styled(Select)`
+  width: 100%;
+  &:focus {
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  transition: box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+`;
+
 class TransferAndCall extends Component {
   constructor() {
     super();
@@ -100,6 +111,7 @@ class TransferAndCall extends Component {
   }
 
   componentDidMount() {
+    console.log(this.context.serviceContract._jsonInterface[5]);
     this.setState({
       fee: 5,
       nonce: 0
@@ -198,6 +210,18 @@ class TransferAndCall extends Component {
   }
 
   render() {
+    const colourOptions = [
+      { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
+      { value: 'blue', label: 'Blue', color: '#0052CC', disabled: true },
+      { value: 'purple', label: 'Purple', color: '#5243AA' },
+      { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
+      { value: 'orange', label: 'Orange', color: '#FF8B00' },
+      { value: 'yellow', label: 'Yellow', color: '#FFC400' },
+      { value: 'green', label: 'Green', color: '#36B37E' },
+      { value: 'forest', label: 'Forest', color: '#00875A' },
+      { value: 'slate', label: 'Slate', color: '#253858' },
+      { value: 'silver', label: 'Silver', color: '#666666' },
+    ];
     return (
       <Container>
         <FormContainer>
@@ -242,6 +266,58 @@ class TransferAndCall extends Component {
           <RowCentered>
             <LeftComponent />
             EUREKA Platform
+          </RowCentered>
+
+          <RowCentered>
+            <LeftComponent />
+            <CustomSelect
+              className="basic-single"
+              classNamePrefix="select"
+              defaultValue={colourOptions[0]}
+              isDisabled={false}
+              isLoading={false}
+              isClearable={false}
+              isRtl={false}
+              isSearchable={true}
+              name="Method name"
+              options={colourOptions}
+              styles={{
+                control: styles => ({
+                  ...styles, backgroundColor: 'white',
+                  // lineHeight: 1.5,
+                  // padding: "0.625rem 0.75rem",
+                  borderRadius: "0.25rem",
+                  transition: "box-shadow 0.15s ease",
+                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  color: __THIRD,
+                  borderColor: __GRAY_200,
+                  border: "1px solid " + __GRAY_200
+                }),
+                // option: (styles, {data, isDisabled, isFocused, isSelected}) => {
+                //   const color = chroma(data.color);
+                //   return {
+                //     ...styles,
+                //     backgroundColor: isDisabled
+                //       ? null
+                //       : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
+                //     color: isDisabled
+                //       ? '#ccc'
+                //       : isSelected
+                //         ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
+                //         : data.color,
+                //     cursor: isDisabled ? 'not-allowed' : 'default',
+                //
+                //     ':active': {
+                //       ...styles[':active'],
+                //       backgroundColor: !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
+                //     },
+                //   };
+                // },
+                input: styles => ({...styles, fontColor: __THIRD}),
+                // placeholder: styles => ({...styles, ...dot()}),
+                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+              }}
+            />
           </RowCentered>
           <Row>
             <LeftComponent>
