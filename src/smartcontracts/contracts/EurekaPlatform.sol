@@ -276,26 +276,30 @@ contract EurekaPlatform {
     */
     event SubmissionProcessStart(uint256 submissionId, address submissionOwner, bytes32 articleHash, bytes32 articleURL, uint256 stateTimestamp);
 
-    function startSubmissionProcess(
-        address _from,
-        uint256 _value,
-        bytes32 _articleHash, bytes32 _articleURL, address[] _authors,
-        uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) public {
+//    function startSubmissionProcess(
+//        address _from,
+//        uint256 _value,
+//        bytes32 _articleHash, bytes32 _articleURL, address[] _authors,
+//        uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) public {
+//
+//        //        require(msg.sender == address(eurekaTokenContract));
+//        require(_value == submissionFee, 'transferred amount needs to equal the submission fee');
+//
+//        uint submissionId = submissionCounter++;
+//        ArticleSubmission storage submission = articleSubmissions[submissionId];
+//
+//        submission.submissionId = submissionId;
+//        submission.submissionOwner = _from;
+//
+//        submitArticleVersion(submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
+//
+//        submission.submissionState = SubmissionState.OPEN;
+//        submission.stateTimestamp = block.timestamp;
+//        emit SubmissionProcessStart(submission.submissionId, submission.submissionOwner, _articleHash, _articleURL, block.timestamp);
+//    }
 
-        //        require(msg.sender == address(eurekaTokenContract));
-        require(_value == submissionFee, 'transferred amount needs to equal the submission fee');
+    function serviceContractTestFunction(uint256 first, bytes32 second) public {
 
-        uint submissionId = submissionCounter++;
-        ArticleSubmission storage submission = articleSubmissions[submissionId];
-
-        submission.submissionId = submissionId;
-        submission.submissionOwner = _from;
-
-        submitArticleVersion(submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
-
-        submission.submissionState = SubmissionState.OPEN;
-        submission.stateTimestamp = block.timestamp;
-        emit SubmissionProcessStart(submission.submissionId, submission.submissionOwner, _articleHash, _articleURL, block.timestamp);
     }
 
     function submitArticleVersion(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL,
