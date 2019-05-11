@@ -137,7 +137,7 @@ class TransferAndCall extends Component {
       isToValid: true,
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
-      selectedMethod: methods[0]
+      selectedMethod: methods[4]
     })
   }
 
