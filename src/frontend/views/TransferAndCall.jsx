@@ -168,7 +168,7 @@ class TransferAndCall extends Component {
     //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
     let input = this.context.web3.eth.abi.encodeParameters(
       ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
-      ['0x15420b71',
+      ['0x38980f82',
         this.context.tokenContract.options.address,
         this.state.to,
         this.state.value.toString(),
