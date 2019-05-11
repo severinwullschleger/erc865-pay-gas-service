@@ -96,6 +96,7 @@ class TransferAndCall extends Component {
   constructor() {
     super();
     this.state = {
+      // transfer data
       tokenAddress: null,
       signature: null,
       from: null,
@@ -106,12 +107,23 @@ class TransferAndCall extends Component {
       isValueValid: null,
       fee: null,
       nonce: null,
-      privateKey: null
+      privateKey: null,
+
+      // call data
+      methods: [],
+      selectedMethod: null
     }
   }
 
   componentDidMount() {
-    console.log(this.context.serviceContract._jsonInterface[5]);
+    let methods = [];
+    this.context.serviceContract._jsonInterface.forEach(e => {
+      if (e.type === "function" && e.constant === false)
+        methods.push({
+          value: e,
+          label: e.name
+        });
+    });
     this.setState({
       fee: 5,
       nonce: 0
@@ -123,7 +135,9 @@ class TransferAndCall extends Component {
       isFromValid: true,
       to: '0xB5227F13682873884a8C394A4a7AcDf369199Dc5',
       isToValid: true,
-      privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f'
+      privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
+      methods,
+      selectedMethod: methods[0]
     })
   }
 
@@ -209,19 +223,11 @@ class TransferAndCall extends Component {
       });
   }
 
+  handleChange(selectedMethod) {
+    this.setState({selectedMethod});
+  }
+
   render() {
-    const colourOptions = [
-      { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
-      { value: 'blue', label: 'Blue', color: '#0052CC', disabled: true },
-      { value: 'purple', label: 'Purple', color: '#5243AA' },
-      { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
-      { value: 'orange', label: 'Orange', color: '#FF8B00' },
-      { value: 'yellow', label: 'Yellow', color: '#FFC400' },
-      { value: 'green', label: 'Green', color: '#36B37E' },
-      { value: 'forest', label: 'Forest', color: '#00875A' },
-      { value: 'slate', label: 'Slate', color: '#253858' },
-      { value: 'silver', label: 'Silver', color: '#666666' },
-    ];
     return (
       <Container>
         <FormContainer>
@@ -273,14 +279,16 @@ class TransferAndCall extends Component {
             <CustomSelect
               className="basic-single"
               classNamePrefix="select"
-              defaultValue={colourOptions[0]}
+              // defaultValue={this.state.selectedMethod}
+              value={this.state.selectedMethod}
+              onChange={e => this.handleChange(e)}
               isDisabled={false}
               isLoading={false}
               isClearable={false}
               isRtl={false}
               isSearchable={true}
               name="Method name"
-              options={colourOptions}
+              options={this.state.methods}
               styles={{
                 control: styles => ({
                   ...styles, backgroundColor: 'white',
