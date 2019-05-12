@@ -113,7 +113,8 @@ class TransferAndCall extends Component {
       // call data
       methods: [],
       selectedMethod: null,
-      callParameters: null,
+      callParameters: [],
+      callParametersEncoded: null,
 
       // sign data
       privateKey: null
@@ -143,10 +144,7 @@ class TransferAndCall extends Component {
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
       selectedMethod: methods[4],
-      callParameters: this.context.web3.eth.abi.encodeParameters(
-        ['uint256', 'bytes32'],
-        ['10000', this.context.web3.utils.utf8ToHex('Hello world')]
-      )
+      callParameters: methods[4].value.inputs
     })
   }
 
@@ -172,6 +170,12 @@ class TransferAndCall extends Component {
 
   signTransactionData() {
 
+    let callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
+      this.state.callParameters.map(e => {return e.type}),
+      [10000, this.context.web3.utils.utf8ToHex('Hello world')]
+    );
+    this.setState({callParametersEncoded});
+
     let nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
@@ -188,7 +192,7 @@ class TransferAndCall extends Component {
 
         // call parameters
         this.state.selectedMethod.value.signature,
-        this.state.callParameters
+        callParametersEncoded
       ]);
     console.log('input: ' + input);
 
@@ -227,7 +231,7 @@ class TransferAndCall extends Component {
       fee: this.state.fee,
       nonce: this.state.nonce,
       methodName: this.state.selectedMethod.value.signature,
-      callParametersEncoded: this.state.callParameters
+      callParametersEncoded: this.state.callParametersEncoded
     };
 
     console.log("sending this object: ", transactionObject);
@@ -249,7 +253,11 @@ class TransferAndCall extends Component {
   }
 
   handleChange(selectedMethod) {
-    this.setState({selectedMethod});
+    console.log(selectedMethod)
+    this.setState({
+      selectedMethod,
+      callParameters: selectedMethod.value.inputs
+    });
   }
 
   render() {

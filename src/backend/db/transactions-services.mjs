@@ -29,7 +29,7 @@ export const saveTransaction = async (transactionHash, transactionInput, service
 };
 
 export const updateTransaction = async (transactionHash, status, receipt) => {
-  db.collection('transactions').update(
+  db.collection('transactions').updateOne(
     { _id: transactionHash },
     {
       $set: {
