@@ -96,22 +96,27 @@ class TransferAndCall extends Component {
   constructor() {
     super();
     this.state = {
+      // validators
+      isFromValid: null,
+      isToValid: null,
+      isValueValid: null,
+
       // transfer data
       tokenAddress: null,
       signature: null,
       from: null,
-      isFromValid: null,
       to: null,
-      isToValid: null,
       value: null,
-      isValueValid: null,
       fee: null,
       nonce: null,
-      privateKey: null,
 
       // call data
       methods: [],
-      selectedMethod: null
+      selectedMethod: null,
+      callParameters: null,
+
+      // sign data
+      privateKey: null
     }
   }
 
@@ -137,7 +142,11 @@ class TransferAndCall extends Component {
       isToValid: true,
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
-      selectedMethod: methods[4]
+      selectedMethod: methods[4],
+      callParameters: this.context.web3.eth.abi.encodeParameters(
+        ['uint256', 'bytes32'],
+        ['10000', this.context.web3.utils.utf8ToHex('Hello world')]
+      )
     })
   }
 
@@ -162,19 +171,26 @@ class TransferAndCall extends Component {
   }
 
   signTransactionData() {
+
     let nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
     //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
     let input = this.context.web3.eth.abi.encodeParameters(
-      ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
-      ['0x38980f82',
+      ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256', "bytes4", "bytes"],
+      [
+        '0x38980f82',
         this.context.tokenContract.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.fee.toString(),
-        nonce.toString()]);
-    console.log(input);
+        nonce.toString(),
+
+        // call parameters
+        this.state.selectedMethod.value.signature,
+        this.state.callParameters
+      ]);
+    console.log('input: ' + input);
 
     let inputHash = this.context.web3.utils.keccak256(input);
     let privateKey;
@@ -202,12 +218,21 @@ class TransferAndCall extends Component {
 
   sendSignedTransaction() {
 
-    let transactionObject = this.state;
-    delete transactionObject.privateKey;
+    let transactionObject = {
+      tokenAddress: this.state.tokenAddress,
+      signature: this.state.signature,
+      from: this.state.from,
+      to: this.state.to,
+      value: this.state.value,
+      fee: this.state.fee,
+      nonce: this.state.nonce,
+      methodName: this.state.selectedMethod.value.signature,
+      callParametersEncoded: this.state.callParameters
+    };
 
     console.log("sending this object: ", transactionObject);
 
-    fetch(`${getDomain()}/api/transfer`, {
+    fetch(`${getDomain()}/api/transferAndCall`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
