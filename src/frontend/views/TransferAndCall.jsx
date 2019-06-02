@@ -104,9 +104,9 @@ class TransferAndCall extends Component {
       // transfer data
       tokenAddress: null,
       signature: null,
-      from: null,
-      to: null,
-      value: null,
+      from: "",
+      to: "",
+      value: 0,
       fee: null,
       nonce: null,
 
@@ -117,7 +117,7 @@ class TransferAndCall extends Component {
       callParametersEncoded: null,
 
       // sign data
-      privateKey: null
+      privateKey: ""
     }
   }
 
