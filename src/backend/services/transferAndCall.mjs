@@ -31,14 +31,24 @@ export const sendTransferAndCallPreSignedTransaction = async (transactionObject)
     })
     .on('receipt', async receipt => {
       promiEvent.eventEmitter.emit('receipt', receipt);
-
       updateTransaction(
         receipt.transactionHash,
         receipt.status === true ? TRANSACTION_STATUS.CONFIRMED_SUCCESS : TRANSACTION_STATUS.CONFIRMED_REVERTED,
         receipt
       );
-
+      console.log("Transaction succeeded");
+    })
+    .on('error', async error => {
+      promiEvent.eventEmitter.emit('error', error);
+      const errorObj = JSON.parse(error.message.substring('Transaction has been reverted by the EVM:\\n'.length-1));
+      updateTransaction(
+        errorObj.transactionHash,
+        TRANSACTION_STATUS.ERROR,
+        errorObj
+      );
+      console.log(error);
     });
+
 
   return promiEvent.eventEmitter;
 };
