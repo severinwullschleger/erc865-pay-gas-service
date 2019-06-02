@@ -27,6 +27,11 @@ const Row = styled.div`
   margin-top: 20px;
 `;
 
+const TitleRow = styled(Row)`
+  flex: 1;
+  font-weight: bold;
+`;
+
 const RowCentered = styled(Row)`
   align-items: center;    //vertical  alignment
 `;
@@ -255,11 +260,16 @@ class TransferAndCall extends Component {
   }
 
   handleChange(selectedMethod) {
-    console.log(selectedMethod)
     this.setState({
       selectedMethod,
       callParameters: selectedMethod.value.inputs
     });
+  }
+
+  handleParameterInput(index, e) {
+    let parameters = this.state.callParameters;
+    parameters[index].value = e.target.value;
+    this.setState({callParameters: parameters});
   }
 
   render() {
@@ -303,12 +313,16 @@ class TransferAndCall extends Component {
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent/>
+            <LeftComponent>
+              Contract Name:
+            </LeftComponent>
             EUREKA Platform
           </RowCentered>
 
           <RowCentered>
-            <LeftComponent/>
+            <LeftComponent>
+              Contract Function:
+            </LeftComponent>
             <CustomSelect
               className="basic-single"
               classNamePrefix="select"
@@ -359,12 +373,13 @@ class TransferAndCall extends Component {
                 singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
               }}
             />
+            <Row>Method Parameters</Row>
           </RowCentered>
           {this.state.callParameters.length !== 0
             ? (
               <RowMultiLines>
+                <TitleRow>Method Parameters</TitleRow>
                 {this.state.callParameters.map((param, index) => {
-                  console.log(param);
                   return (
                     <RowCentered key={"parameter"+index}>
                       <LeftComponent>
