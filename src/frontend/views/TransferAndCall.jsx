@@ -144,7 +144,7 @@ class TransferAndCall extends Component {
       isValueValid: true,
       from: '0x9ea02Ac11419806aB9d5A512c7d79AC422cB36F7',
       isFromValid: true,
-      to: '0xB5227F13682873884a8C394A4a7AcDf369199Dc5',
+      to: this.context.serviceContract.options.address,
       isToValid: true,
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
@@ -179,7 +179,13 @@ class TransferAndCall extends Component {
       this.state.callParameters.map(e => {
         return e.type
       }),
-      [10000, this.context.web3.utils.utf8ToHex('Hello world')]
+      this.state.callParameters.map(e => {
+        if (e.type === "bytes32") {
+          if (!this.context.web3.utils.isHexStrict(e.value))
+            return this.context.web3.utils.utf8ToHex(e.value);
+        }
+        return e.value
+      }),
     );
     this.setState({callParametersEncoded});
 
