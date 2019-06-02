@@ -298,8 +298,10 @@ contract EurekaPlatform {
 //        emit SubmissionProcessStart(submission.submissionId, submission.submissionOwner, _articleHash, _articleURL, block.timestamp);
 //    }
 
+    event TestEvent (uint256 first, bytes32 second);
     function serviceContractTestFunction(uint256 first, bytes32 second) public {
-
+        emit TestEvent(first, second);
+//        require(first == 100, 'Not equal 100.');
     }
 
     function submitArticleVersion(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL,
