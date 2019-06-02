@@ -171,7 +171,9 @@ class TransferAndCall extends Component {
   signTransactionData() {
 
     let callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
-      this.state.callParameters.map(e => {return e.type}),
+      this.state.callParameters.map(e => {
+        return e.type
+      }),
       [10000, this.context.web3.utils.utf8ToHex('Hello world')]
     );
     this.setState({callParametersEncoded});
@@ -297,18 +299,16 @@ class TransferAndCall extends Component {
               onChange={e => {
                 this.handleInput('to', e);
                 this.validateAddress('isToValid', e);
-                if (this.isServiceContractAddress(e))
-                  this.props.history.push(`/transferAndCall`);
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent />
+            <LeftComponent/>
             EUREKA Platform
           </RowCentered>
 
           <RowCentered>
-            <LeftComponent />
+            <LeftComponent/>
             <CustomSelect
               className="basic-single"
               classNamePrefix="select"
@@ -360,6 +360,29 @@ class TransferAndCall extends Component {
               }}
             />
           </RowCentered>
+          {this.state.callParameters.length !== 0
+            ? (
+              <RowMultiLines>
+                {this.state.callParameters.map((param, index) => {
+                  console.log(param);
+                  return (
+                    <RowCentered key={"parameter"+index}>
+                      <LeftComponent>
+                        {param.name}
+                      </LeftComponent>
+                      <AddressInputField
+                        placeholder={param.type === "bytes32" ? "bytes32 or string" : param.type}
+                        value={param.value}
+                        onChange={e => {
+                          this.handleParameterInput(index, e);
+                        }}
+                      />
+                    </RowCentered>
+                  );
+                })}
+              </RowMultiLines>
+            )
+            : null}
           <Row>
             <LeftComponent>
               Transaction costs:
