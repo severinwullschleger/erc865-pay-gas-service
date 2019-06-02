@@ -373,7 +373,6 @@ class TransferAndCall extends Component {
                 singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
               }}
             />
-            <Row>Method Parameters</Row>
           </RowCentered>
           {this.state.callParameters.length !== 0
             ? (
