@@ -395,20 +395,22 @@ class TransferAndCall extends Component {
               <RowMultiLines>
                 <TitleRow>Method Parameters</TitleRow>
                 {this.state.callParameters.map((param, index) => {
-                  return (
-                    <RowCentered key={"parameter"+index}>
-                      <LeftComponent>
-                        {param.name}
-                      </LeftComponent>
-                      <AddressInputField
-                        placeholder={param.type === "bytes32" ? "bytes32 or string" : param.type}
-                        value={param.value}
-                        onChange={e => {
-                          this.handleParameterInput(index, e);
-                        }}
-                      />
-                    </RowCentered>
-                  );
+                  if (index > 1)
+                    return (
+                      <RowCentered key={"parameter" + index}>
+                        <LeftComponent>
+                          {param.name}
+                        </LeftComponent>
+                        <AddressInputField
+                          placeholder={param.type === "bytes32" ? "bytes32 or string" : param.type}
+                          value={param.value}
+                          onChange={e => {
+                            this.handleParameterInput(index, e);
+                          }}
+                        />
+                      </RowCentered>
+                    );
+                  else return null;
                 })}
               </RowMultiLines>
             )
@@ -445,7 +447,6 @@ class TransferAndCall extends Component {
           <WideButton
             disabled={!(this.state.isValueValid && this.state.isToValid && this.state.isFromValid)}
             onClick={async () => {
-              console.log(this.state.isToValid)
               await this.signTransactionData();
               this.sendSignedTransaction();
             }}>
