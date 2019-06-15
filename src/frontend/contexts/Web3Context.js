@@ -27,12 +27,15 @@ if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask) {
 
   tokenContract = new web3Instance.eth.Contract(tokenABI, TOKEN_KOVAN_ADDRESS);
 } else {
-  web3Instance = new Web3('http://localhost:7545');
+  //this service does not need a provider
+  // web3Instance = new Web3('http://localhost:7545');
+  web3Instance = new Web3();
   serviceContract = new web3Instance.eth.Contract(serviceABI);
   tokenContract = new web3Instance.eth.Contract(tokenABI);
   serviceContract.options.address = serviceAddress;
   tokenContract.options.address = tokenAddress;
-  provider = Web3Providers.LOCALHOST;
+  //this service does not need a provider
+  provider = Web3Providers.NO_PROVIDER;
 }
 
 export const Web3Context = React.createContext({
