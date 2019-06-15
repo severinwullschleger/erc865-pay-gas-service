@@ -299,9 +299,8 @@ contract EurekaPlatform {
 //    }
 
     event TestEvent (uint256 first, bytes32 second);
-    function serviceContractTestFunction(uint256 first, bytes32 second) public {
+    function serviceContractTestFunction(address _from, uint256 _value, uint256 first, bytes32 second) public {
         emit TestEvent(first, second);
-//        require(first == 100, 'Not equal 100.');
     }
 
     function submitArticleVersion(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL,
