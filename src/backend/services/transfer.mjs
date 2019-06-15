@@ -22,20 +22,47 @@ export const sendTransferPreSignedTransaction = async (transactionObject) => {
       gas: 80000000
     })
     .on('transactionHash', async tx => {
-      promiEvent.eventEmitter.emit('transactionHash', tx);
-      promiEvent.resolve(tx);
+      const saveToDbSuccess = await saveTransaction(tx, transactionObject, config.unlockedServiceAccount);
 
-      saveTransaction(tx, transactionObject, config.unlockedServiceAccount);
+      const txObject = {txHash: tx, saveToDbSuccess};
+      promiEvent.eventEmitter.emit('transactionHash', txObject);
+      promiEvent.resolve(txObject);
     })
+
     .on('receipt', async receipt => {
-      promiEvent.eventEmitter.emit('receipt', receipt);
 
       updateTransaction(
         receipt.transactionHash,
-        receipt.status === true ? TRANSACTION_STATUS.CONFIRMED_SUCCESS : TRANSACTION_STATUS.CONFIRMED_REVERTED,
+        receipt.status === true ? TRANSACTION_STATUS.CONFIRMED : TRANSACTION_STATUS.REVERTED,
         receipt
-      );
+      )
+        .then(() => {
+          promiEvent.eventEmitter.emit('receipt', {receipt, updateDBSuccess: true});
+        })
+        .catch(error => {
+          promiEvent.eventEmitter.emit('receipt', {receipt, updateDBSuccess: false, error});
+        })
 
+    })
+    .on('error', errorReceipt => {
+      console.log(errorReceipt);
+      if (errorReceipt) {
+        const errorObj = JSON.parse(errorReceipt.message.substring('Transaction has been reverted by the EVM:\\n'.length-1));
+        updateTransaction(
+          errorObj.transactionHash,
+          TRANSACTION_STATUS.ERROR,
+          null,
+          errorObj
+        )
+          .then(() => {
+            promiEvent.eventEmitter.emit('error', {errorObj, updateDBSuccess: true});
+          })
+          .catch(error => {
+            promiEvent.eventEmitter.emit('error', {errorObj, updateDBSuccess: false, error});
+          });
+      } else {
+        promiEvent.eventEmitter.emit('error', {errorMessage: "An error occurred.", updateDBSuccess: false});
+      }
     });
 
   return promiEvent.eventEmitter;
