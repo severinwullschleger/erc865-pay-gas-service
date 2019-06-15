@@ -21,21 +21,18 @@ export const saveTransaction = async (transactionHash, transactionInput, service
     serviceAccountAddress
   });
 
-  if (insert.result.ok === 1) {
-    return {_id: insert.insertedId};
-  } else {
-    throw {statusCode: 500};
-  }
+  return insert.result.ok === 1;
 };
 
-export const updateTransaction = async (transactionHash, status, receipt) => {
-  db.collection('transactions').updateOne(
+export const updateTransaction = async (transactionHash, status, receipt, error) => {
+  return db.collection('transactions').updateOne(
     { _id: transactionHash },
     {
       $set: {
         status,
         receipt,
-        modified: new Date()
+        modified: new Date(),
+        error
       }
     },
     { upsert: true }
