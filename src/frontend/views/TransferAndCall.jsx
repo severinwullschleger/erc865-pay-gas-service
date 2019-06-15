@@ -175,17 +175,27 @@ class TransferAndCall extends Component {
 
   signTransactionData() {
 
-    let callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
-      this.state.callParameters.map(e => {
+    let types = this.state.callParameters.map(e => {
         return e.type
-      }),
-      this.state.callParameters.map(e => {
-        if (e.type === "bytes32") {
-          if (!this.context.web3.utils.isHexStrict(e.value))
-            return this.context.web3.utils.utf8ToHex(e.value);
-        }
-        return e.value
-      }),
+      });
+    // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
+    types.shift();
+    types.shift();
+
+    let values = this.state.callParameters.map(e => {
+      if (e.type === "bytes32" && e.value) {
+        if (!this.context.web3.utils.isHexStrict(e.value))
+          return this.context.web3.utils.utf8ToHex(e.value);
+      }
+      return e.value
+    });
+    // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
+    values.shift();
+    values.shift();
+
+    let callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
+      types,
+      values
     );
     this.setState({callParametersEncoded});
 
