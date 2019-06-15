@@ -22,7 +22,7 @@
     "solc": "0.4.24",
     "styled-components": "^4.1.3",
     "web3": "1.0.0-beta.37",
-    "web3-core-promievent": "latest"
+    "web3-core-promievent": "1.0.0-beta.37"
   },
   "scripts": {
     "start": "react-scripts start",
