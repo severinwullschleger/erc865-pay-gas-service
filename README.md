@@ -1,3 +1,9 @@
+### Notes during developement:
+* Problems with signing method of web3.js: It includes a hashing, which is not done in the ERC-865 token contracts. This leaded to different hashes and therefore different values.
+* Not identical signature leaded to "random" address. Therefore a checking if from address is the same was included.
+* The ERC-865 token contract (DOS token) always passes the from and the value parameter to the service contract. Therefore not every method of a contract can be called. Only the ones whose first parameters are _from (address) and _value (uint256)
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
