@@ -126,10 +126,18 @@ class TransferAndCall extends Component {
     }
   }
 
+  isCallableMethod(e) {
+    return e.type === "function"
+      && e.constant === false
+      && e.inputs.length >= 2
+      && e.inputs[0].type === 'address'
+      && e.inputs[1].type === 'uint256'
+  };
+
   componentDidMount() {
     let methods = [];
     this.context.serviceContract._jsonInterface.forEach(e => {
-      if (e.type === "function" && e.constant === false)
+      if (this.isCallableMethod(e))
         methods.push({
           value: e,
           label: e.name
@@ -148,8 +156,8 @@ class TransferAndCall extends Component {
       isToValid: true,
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
-      selectedMethod: methods[4],
-      callParameters: methods[4].value.inputs
+      selectedMethod: methods[0],
+      callParameters: methods[0].value.inputs
     })
   }
 
