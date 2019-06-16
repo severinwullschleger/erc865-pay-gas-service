@@ -5,8 +5,6 @@ import {serviceContracts, tokenContracts} from "../../helpers/get-contracts.mjs"
 
 const web3 = window.web3;
 let web3Instance = null;
-let serviceContract = serviceContracts[0].contractObj;
-let tokenContract = tokenContracts[0].contractObj;
 let provider;
 if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask) {
   // MetaMask as main provider
@@ -21,7 +19,7 @@ if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask) {
 
 export const Web3Context = React.createContext({
   web3: web3Instance,
-  serviceContract,
-  tokenContract,
+  serviceContracts,
+  tokenContracts,
   provider
 });

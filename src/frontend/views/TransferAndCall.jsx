@@ -136,7 +136,7 @@ class TransferAndCall extends Component {
 
   componentDidMount() {
     let methods = [];
-    this.context.serviceContract._jsonInterface.forEach(e => {
+    this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
       if (this.isCallableMethod(e))
         methods.push({
           value: e,
@@ -152,7 +152,7 @@ class TransferAndCall extends Component {
       isValueValid: true,
       from: '0x9ea02Ac11419806aB9d5A512c7d79AC422cB36F7',
       isFromValid: true,
-      to: this.context.serviceContract.options.address,
+      to: this.context.serviceContracts[0].contractObj.options.address,
       isToValid: true,
       privateKey: '3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f',
       methods,
@@ -176,8 +176,8 @@ class TransferAndCall extends Component {
   isServiceContractAddress(e) {
     //TODO access context and more than one service contract
 
-    if (this.context.serviceContract && this.context.serviceContract.options && this.context.serviceContract.options.address && e.target.value)
-      return this.context.serviceContract.options.address === e.target.value;
+    if (this.context.serviceContracts[0].contractObj && this.context.serviceContracts[0].contractObj.options && this.context.serviceContracts[0].contractObj.options.address && e.target.value)
+      return this.context.serviceContracts[0].contractObj.options.address === e.target.value;
     return false;
   }
 
@@ -215,7 +215,7 @@ class TransferAndCall extends Component {
       ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256', "bytes4", "bytes"],
       [
         '0x38980f82',
-        this.context.tokenContract.options.address,
+        this.context.tokenContracts[0].contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.fee.toString(),
@@ -247,7 +247,7 @@ class TransferAndCall extends Component {
     this.setState({
       signature: signatureInHex,
       nonce,
-      tokenAddress: this.context.tokenContract.options.address
+      tokenAddress: this.context.tokenContracts[0].contractObj.options.address
     });
   }
 
@@ -308,7 +308,56 @@ class TransferAndCall extends Component {
                 onChange={e => this.handleInput('value', e)}
               />
             </LeftComponent>
-            DOS tokens
+            <CustomSelect
+              className="basic-single"
+              classNamePrefix="select"
+              // defaultValue={this.state.selectedMethod}
+              value={this.state.selectedMethod}
+              onChange={e => this.handleChange(e)}
+              isDisabled={false}
+              isLoading={false}
+              isClearable={false}
+              isRtl={false}
+              isSearchable={true}
+              name="Method name"
+              options={this.state.methods}
+              styles={{
+                control: styles => ({
+                  ...styles, backgroundColor: 'white',
+                  // lineHeight: 1.5,
+                  // padding: "0.625rem 0.75rem",
+                  borderRadius: "0.25rem",
+                  transition: "box-shadow 0.15s ease",
+                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  color: __THIRD,
+                  borderColor: __GRAY_200,
+                  border: "1px solid " + __GRAY_200
+                }),
+                // option: (styles, {data, isDisabled, isFocused, isSelected}) => {
+                //   const color = chroma(data.color);
+                //   return {
+                //     ...styles,
+                //     backgroundColor: isDisabled
+                //       ? null
+                //       : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
+                //     color: isDisabled
+                //       ? '#ccc'
+                //       : isSelected
+                //         ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
+                //         : data.color,
+                //     cursor: isDisabled ? 'not-allowed' : 'default',
+                //
+                //     ':active': {
+                //       ...styles[':active'],
+                //       backgroundColor: !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
+                //     },
+                //   };
+                // },
+                input: styles => ({...styles, fontColor: __THIRD}),
+                // placeholder: styles => ({...styles, ...dot()}),
+                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+              }}
+            />
           </RowCentered>
           <RowCentered>
             <LeftComponent>

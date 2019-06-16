@@ -86,6 +86,7 @@ class Transfer extends Component {
     super();
     this.state = {
       tokenAddress: null,
+      selectedTokenContract: null,
       signature: null,
       from: null,
       isFromValid: null,
@@ -101,6 +102,7 @@ class Transfer extends Component {
 
   componentDidMount() {
     this.setState({
+      selectedTokenContract: this.context.tokenContracts[0],
       fee: 5,
       nonce: 0
       // testing purposes
@@ -130,8 +132,8 @@ class Transfer extends Component {
   isServiceContractAddress(e) {
     //TODO access context and more than one service contract
 
-    if (this.context.serviceContract && this.context.serviceContract.options && this.context.serviceContract.options.address && e.target.value)
-      return this.context.serviceContract.options.address === e.target.value;
+    if (this.context.serviceContracts[0].contractObj && this.context.serviceContracts[0].contractObj.options && this.context.serviceContracts[0].contractObj.options.address && e.target.value)
+      return this.context.serviceContracts[0].contractObj.options.address === e.target.value;
     return false;
   }
 
@@ -143,7 +145,7 @@ class Transfer extends Component {
     let input = this.context.web3.eth.abi.encodeParameters(
       ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
       ['0x15420b71',
-        this.context.tokenContract.options.address,
+        this.context.tokenContracts[0].contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.fee.toString(),
@@ -170,7 +172,7 @@ class Transfer extends Component {
     this.setState({
       signature: signatureInHex,
       nonce,
-      tokenAddress: this.context.tokenContract.options.address
+      tokenAddress: this.context.tokenContracts[0].contractObj.options.address
     });
   }
 
