@@ -6,6 +6,8 @@ import secp256k1 from "secp256k1";
 import {Web3Context} from '../contexts/Web3Context';
 import {getDomain} from "../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
+import {__GRAY_200, __THIRD} from "../helpers/colors.js";
+import Select from "react-select";
 
 const Container = styled.div`
   display: flex;
@@ -81,11 +83,21 @@ const WideButton = styled(Button)`
   `}
 `;
 
+const CustomSelect = styled(Select)`
+  width: 100%;
+  &:focus {
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  transition: box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+`;
+
 class Transfer extends Component {
   constructor() {
     super();
     this.state = {
-      tokenAddress: null,
+      // transfer data
+      tokenContracts: [],
       selectedTokenContract: null,
       signature: null,
       from: null,
@@ -101,8 +113,16 @@ class Transfer extends Component {
   }
 
   componentDidMount() {
+    let tokenContracts = this.context.tokenContracts.map((c, index) => {
+      return {
+        value: c,
+        label: c.name,
+        index
+      };
+    });
     this.setState({
-      selectedTokenContract: this.context.tokenContracts[0],
+      tokenContracts,
+      selectedTokenContract: tokenContracts[0],
       fee: 5,
       nonce: 0
       // testing purposes
@@ -119,6 +139,12 @@ class Transfer extends Component {
 
   handleInput(stateKey, e) {
     this.setState({[stateKey]: e.target.value})
+  }
+
+  handleTokenContractChange(selectedTokenContract) {
+    this.setState({
+      selectedTokenContract
+    });
   }
 
   validateAddress(stateKey, e) {
@@ -178,8 +204,15 @@ class Transfer extends Component {
 
   sendSignedTransaction() {
 
-    let transactionObject = this.state;
-    delete transactionObject.privateKey;
+    let transactionObject = {
+      tokenContractIndex: this.state.selectedTokenContract.index,
+      signature: this.state.signature,
+      from: this.state.from,
+      to: this.state.to,
+      value: this.state.value,
+      fee: this.state.fee,
+      nonce: this.state.nonce
+    };
 
     console.log("sending this object: ", transactionObject);
 
@@ -211,7 +244,33 @@ class Transfer extends Component {
                 onChange={e => this.handleInput('value', e)}
               />
             </LeftComponent>
-            DOS tokens
+            <CustomSelect
+              className="basic-single"
+              classNamePrefix="select"
+              // defaultValue={this.state.selectedMethod}
+              value={this.state.selectedTokenContract}
+              onChange={e => this.handleTokenContractChange(e)}
+              isDisabled={false}
+              isLoading={false}
+              isClearable={false}
+              isRtl={false}
+              isSearchable={true}
+              name="Token Contract"
+              options={this.state.tokenContracts}
+              styles={{
+                control: styles => ({
+                  ...styles, backgroundColor: 'white',
+                  borderRadius: "0.25rem",
+                  transition: "box-shadow 0.15s ease",
+                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  color: __THIRD,
+                  borderColor: __GRAY_200,
+                  border: "1px solid " + __GRAY_200
+                }),
+                input: styles => ({...styles, fontColor: __THIRD}),
+                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+              }}
+            />
           </RowCentered>
           <RowCentered>
             <LeftComponent>
