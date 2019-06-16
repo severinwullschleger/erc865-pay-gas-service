@@ -124,7 +124,6 @@ class Transfer extends Component {
     this.setState({
       tokenContracts,
       selectedTokenContract: tokenContracts[0],
-      fee: 5,
       nonce: 0
       // testing purposes
       ,
@@ -164,7 +163,7 @@ class Transfer extends Component {
     let input = this.context.web3.eth.abi.encodeParameters(
       ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
       ['0x15420b71',
-        this.context.tokenContracts[0].contractObj.options.address,
+        this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.fee.toString(),
@@ -190,8 +189,7 @@ class Transfer extends Component {
 
     this.setState({
       signature: signatureInHex,
-      nonce,
-      tokenAddress: this.context.tokenContracts[0].contractObj.options.address
+      nonce
     });
   }
 

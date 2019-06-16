@@ -113,7 +113,6 @@ class TransferAndCall extends Component {
       selectedServiceContract: null,
 
       // transfer data
-      tokenAddress: null,
       signature: null,
       from: "",
       to: "",
@@ -239,7 +238,7 @@ class TransferAndCall extends Component {
       ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256', "bytes4", "bytes"],
       [
         '0x38980f82',
-        this.context.tokenContracts[0].contractObj.options.address,
+        this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.fee.toString(),
