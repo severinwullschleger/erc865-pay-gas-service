@@ -1,14 +1,18 @@
 import Web3 from 'web3';
 import dotenv from "dotenv";
 import {isProduction} from "./isProduction.mjs";
+
 let web3;
 
 const getWeb3Instance = () => {
-  if (!web3)
-    web3 = new Web3(getProvider());
+  if (!web3) {
+    web3 = (typeof window !== "undefined")
+      ? new Web3()
+      : new Web3(getBackendProvider());
+  }
 };
 
-const getProvider = () => {
+const getBackendProvider = () => {
 
   if (!isProduction()) {
     dotenv.config();  //import env variables from .env file
@@ -26,18 +30,17 @@ const getProvider = () => {
   }
   else {
     console.error('provider ' + process.env.BC_NETWORK + ' couldn\'t be found');
-    process.exit(1);
   }
   provider.on('connect', (e) => {
     console.log('Web3 Provider connected to ' + web3.currentProvider.connection.url);
   });
   provider.on('error', e => {
     console.error('Web3 Provider Error', e);
-    web3 = new Web3(getProvider());
+    web3 = new Web3(getBackendProvider());
   });
   provider.on('end', e => {
     console.error('Web3 Provider Ended', e);
-    web3 = new Web3(getProvider());
+    web3 = new Web3(getBackendProvider());
   });
   return provider;
 };
