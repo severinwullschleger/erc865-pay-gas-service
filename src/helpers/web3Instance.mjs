@@ -1,16 +1,33 @@
 import Web3 from 'web3';
 import dotenv from "dotenv";
 import {isProduction} from "./isProduction.mjs";
+import Web3Providers from "../frontend/web3/Web3Providers.mjs";
 
 let web3;
+export let web3Provider;
 
 const getWeb3Instance = () => {
   if (!web3) {
     web3 = (typeof window !== "undefined")
-      ? new Web3()
+      ? getFrontendWeb3()
       : new Web3(getBackendProvider());
   }
 };
+
+const getFrontendWeb3 = () => {
+  if (window.web3 && window.web3.currentProvider.isMetaMask) {
+    // MetaMask as main provider
+    console.info('MetaMask detected in this browser');
+    web3Provider = Web3Providers.META_MASK;
+    return new Web3(window.web3.currentProvider);
+  }
+  else {
+    //this service does not need a provider, before: return new Web3('http://localhost:7545');
+    web3Provider = Web3Providers.NO_PROVIDER;
+    return new Web3();
+  }
+};
+
 
 const getBackendProvider = () => {
 

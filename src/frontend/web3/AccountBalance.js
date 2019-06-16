@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {__GRAY_100, __GRAY_200, __THIRD} from '../helpers/colors.js';
 import Icon from '../webpack/views/icons/Icon.js';
-import Web3Providers from './Web3Providers.js';
+import Web3Providers from './Web3Providers.mjs';
 import Select from 'react-select';
 import {Balance} from '../webpack/views/Balance.js';
 import withWeb3 from '../webpack/contexts/WithWeb3.js';
