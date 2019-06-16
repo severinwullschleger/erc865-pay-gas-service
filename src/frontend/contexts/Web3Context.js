@@ -14,10 +14,8 @@ if (typeof web3 !== 'undefined' && web3.currentProvider.isMetaMask) {
   web3Instance = new Web3(web3.currentProvider);
   provider = Web3Providers.META_MASK;
 } else {
-  //this service does not need a provider
-  // web3Instance = new Web3('http://localhost:7545');
+  //this service does not need a provider, before: web3Instance = new Web3('http://localhost:7545');
   web3Instance = new Web3();
-  //this service does not need a provider
   provider = Web3Providers.NO_PROVIDER;
 }
 
