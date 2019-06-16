@@ -19,8 +19,11 @@ export const getSmartContracts = () => {
       'DOS.sol': fs.readFileSync(
         path.resolve(DIR_NAME, 'src/smartcontracts/contracts/DOS.sol'),
         'utf-8'
-      )
-      ,
+      ),
+      // 'Eureka.sol': fs.readFileSync(
+      //   path.resolve(DIR_NAME, 'src/smartcontracts/contracts/Eureka.sol'),
+      //   'utf-8'
+      // ),
       'EurekaPlatform.sol': fs.readFileSync(
         path.resolve(
           DIR_NAME,

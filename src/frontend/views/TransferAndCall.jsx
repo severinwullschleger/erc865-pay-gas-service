@@ -8,6 +8,7 @@ import {getDomain} from "../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
 import Select from 'react-select';
 import {__GRAY_200, __THIRD} from "../helpers/colors.js";
+import {isServiceContractAddress} from "./formHelpers.js";
 
 const Container = styled.div`
   display: flex;
@@ -106,9 +107,12 @@ class TransferAndCall extends Component {
       isToValid: null,
       isValueValid: null,
 
-      // transfer data
       tokenContracts: [],
       selectedTokenContract: null,
+      serviceContracts: [],
+      selectedServiceContract: null,
+
+      // transfer data
       tokenAddress: null,
       signature: null,
       from: "",
@@ -152,9 +156,18 @@ class TransferAndCall extends Component {
         index
       };
     });
+    let serviceContracts = this.context.serviceContracts.map((c, index) => {
+      return {
+        value: c,
+        label: c.name,
+        index
+      };
+    });
     this.setState({
       tokenContracts,
       selectedTokenContract: tokenContracts[0],
+      serviceContracts,
+      // selectedServiceContract: serviceContracts[0],
       fee: 5,
       nonce: 0
       // testing purposes
@@ -176,8 +189,8 @@ class TransferAndCall extends Component {
     this.setState({[stateKey]: e.target.value})
   }
 
-  validateAddress(stateKey, e) {
-    if (this.context.web3.utils.isAddress(e.target.value)) {
+  validateAddress(stateKey, address) {
+    if (this.context.web3.utils.isAddress(address)) {
       this.setState({[stateKey]: true});
     } else {
       this.setState({[stateKey]: false});
@@ -306,6 +319,21 @@ class TransferAndCall extends Component {
     });
   }
 
+  handleServiceContractChange(selectedServiceContract) {
+    this.setState({
+      selectedServiceContract,
+      to: selectedServiceContract.value.contractObj.options.address
+    });
+    this.validateAddress('isToValid', selectedServiceContract.value.contractObj.options.address);
+  }
+
+  changeServiceContractTo(value) {
+    this.state.serviceContracts.forEach(c => {
+      if (c.value.contractObj.options.address.toLowerCase() === value.toLowerCase())
+        this.handleServiceContractChange(c);
+    })
+  }
+
   handleParameterInput(index, e) {
     let parameters = this.state.callParameters;
     parameters[index].value = e.target.value;
@@ -361,7 +389,7 @@ class TransferAndCall extends Component {
               value={this.state.from}
               onChange={e => {
                 this.handleInput('from', e);
-                this.validateAddress('isFromValid', e);
+                this.validateAddress('isFromValid', e.target.value);
               }}
             />
           </RowCentered>
@@ -374,7 +402,10 @@ class TransferAndCall extends Component {
               value={this.state.to}
               onChange={e => {
                 this.handleInput('to', e);
-                this.validateAddress('isToValid', e);
+                this.validateAddress('isToValid', e.target.value);
+                if (isServiceContractAddress(this.context.serviceContracts, e.target.value))
+                  this.changeServiceContractTo(e.target.value);
+                else this.setState({selectedServiceContract: null})
               }}
             />
           </RowCentered>
@@ -382,7 +413,33 @@ class TransferAndCall extends Component {
             <LeftComponent>
               Contract Name:
             </LeftComponent>
-            EUREKA Platform
+            <CustomSelect
+              className="basic-single"
+              classNamePrefix="select"
+              // defaultValue={this.state.selectedMethod}
+              value={this.state.selectedServiceContract}
+              onChange={e => this.handleServiceContractChange(e)}
+              isDisabled={false}
+              isLoading={false}
+              isClearable={false}
+              isRtl={false}
+              isSearchable={true}
+              name="Service Contract"
+              options={this.state.serviceContracts}
+              styles={{
+                control: styles => ({
+                  ...styles, backgroundColor: 'white',
+                  borderRadius: "0.25rem",
+                  transition: "box-shadow 0.15s ease",
+                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  color: __THIRD,
+                  borderColor: __GRAY_200,
+                  border: "1px solid " + __GRAY_200
+                }),
+                input: styles => ({...styles, fontColor: __THIRD}),
+                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+              }}
+            />
           </RowCentered>
 
           <RowCentered>

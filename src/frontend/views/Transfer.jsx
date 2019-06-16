@@ -8,6 +8,7 @@ import {getDomain} from "../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
 import {__GRAY_200, __THIRD} from "../helpers/colors.js";
 import Select from "react-select";
+import {isServiceContractAddress} from "./formHelpers.js";
 
 const Container = styled.div`
   display: flex;
@@ -155,14 +156,6 @@ class Transfer extends Component {
     }
   }
 
-  isServiceContractAddress(e) {
-    //TODO access context and more than one service contract
-
-    if (this.context.serviceContracts[0].contractObj && this.context.serviceContracts[0].contractObj.options && this.context.serviceContracts[0].contractObj.options.address && e.target.value)
-      return this.context.serviceContracts[0].contractObj.options.address === e.target.value;
-    return false;
-  }
-
   signTransactionData() {
     let nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
@@ -295,7 +288,7 @@ class Transfer extends Component {
               onChange={e => {
                 this.handleInput('to', e);
                 this.validateAddress('isToValid', e);
-                if (this.isServiceContractAddress(e))
+                if (isServiceContractAddress(this.context.serviceContracts, e.target.value))
                   this.props.history.push(`/transferAndCall`);
               }}
             />
