@@ -107,6 +107,8 @@ class TransferAndCall extends Component {
       isValueValid: null,
 
       // transfer data
+      tokenContracts: [],
+      selectedTokenContract: null,
       tokenAddress: null,
       signature: null,
       from: "",
@@ -143,7 +145,16 @@ class TransferAndCall extends Component {
           label: e.name
         });
     });
+    let tokenContracts = this.context.tokenContracts.map((c, index) => {
+      return {
+        value: c,
+        label: c.name,
+        index
+      };
+    });
     this.setState({
+      tokenContracts,
+      selectedTokenContract: tokenContracts[0],
       fee: 5,
       nonce: 0
       // testing purposes
@@ -246,15 +257,14 @@ class TransferAndCall extends Component {
 
     this.setState({
       signature: signatureInHex,
-      nonce,
-      tokenAddress: this.context.tokenContracts[0].contractObj.options.address
+      nonce
     });
   }
 
   sendSignedTransaction() {
 
     let transactionObject = {
-      tokenAddress: this.state.tokenAddress,
+      tokenContractIndex: this.state.selectedTokenContract.index,
       signature: this.state.signature,
       from: this.state.from,
       to: this.state.to,
@@ -283,10 +293,16 @@ class TransferAndCall extends Component {
       });
   }
 
-  handleChange(selectedMethod) {
+  handleMethodChange(selectedMethod) {
     this.setState({
       selectedMethod,
       callParameters: selectedMethod.value.inputs
+    });
+  }
+
+  handleTokenContractChange(selectedTokenContract) {
+    this.setState({
+      selectedTokenContract
     });
   }
 
@@ -312,20 +328,18 @@ class TransferAndCall extends Component {
               className="basic-single"
               classNamePrefix="select"
               // defaultValue={this.state.selectedMethod}
-              value={this.state.selectedMethod}
-              onChange={e => this.handleChange(e)}
+              value={this.state.selectedTokenContract}
+              onChange={e => this.handleTokenContractChange(e)}
               isDisabled={false}
               isLoading={false}
               isClearable={false}
               isRtl={false}
               isSearchable={true}
-              name="Method name"
-              options={this.state.methods}
+              name="Token Contract"
+              options={this.state.tokenContracts}
               styles={{
                 control: styles => ({
                   ...styles, backgroundColor: 'white',
-                  // lineHeight: 1.5,
-                  // padding: "0.625rem 0.75rem",
                   borderRadius: "0.25rem",
                   transition: "box-shadow 0.15s ease",
                   boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
@@ -333,28 +347,7 @@ class TransferAndCall extends Component {
                   borderColor: __GRAY_200,
                   border: "1px solid " + __GRAY_200
                 }),
-                // option: (styles, {data, isDisabled, isFocused, isSelected}) => {
-                //   const color = chroma(data.color);
-                //   return {
-                //     ...styles,
-                //     backgroundColor: isDisabled
-                //       ? null
-                //       : isSelected ? data.color : isFocused ? color.alpha(0.1).css() : null,
-                //     color: isDisabled
-                //       ? '#ccc'
-                //       : isSelected
-                //         ? chroma.contrast(color, 'white') > 2 ? 'white' : 'black'
-                //         : data.color,
-                //     cursor: isDisabled ? 'not-allowed' : 'default',
-                //
-                //     ':active': {
-                //       ...styles[':active'],
-                //       backgroundColor: !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
-                //     },
-                //   };
-                // },
                 input: styles => ({...styles, fontColor: __THIRD}),
-                // placeholder: styles => ({...styles, ...dot()}),
                 singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
               }}
             />
@@ -401,7 +394,7 @@ class TransferAndCall extends Component {
               classNamePrefix="select"
               // defaultValue={this.state.selectedMethod}
               value={this.state.selectedMethod}
-              onChange={e => this.handleChange(e)}
+              onChange={e => this.handleMethodChange(e)}
               isDisabled={false}
               isLoading={false}
               isClearable={false}
@@ -480,7 +473,7 @@ class TransferAndCall extends Component {
               <div>
                 <Fee>
                   {this.state.fee}
-                </Fee> DOS
+                </Fee> {this.state.selectedTokenContract && this.state.selectedTokenContract.value.symbol }
               </div>
               <Padded>
                 {'≈'}<Fee>0.20</Fee> ETH
