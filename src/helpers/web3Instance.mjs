@@ -1,7 +1,6 @@
 import Web3 from 'web3';
-import dotenv from "dotenv";
-import {isProduction} from "./isProduction.mjs";
 import Web3Providers from "../frontend/web3/Web3Providers.mjs";
+import config from "../config.json"
 
 let web3;
 export let web3Provider;
@@ -31,35 +30,30 @@ const getFrontendWeb3 = () => {
 
 const getBackendProvider = () => {
 
-  if (!isProduction()) {
-    dotenv.config();  //import env variables from .env file
+  if (config.ethereumNetwork === 'main') {
+    web3Provider = new Web3.providers.WebsocketProvider('wss://infura.io/ws');
   }
-
-  let provider;
-  if (process.env.BC_NETWORK === 'main') {
-    provider = new Web3.providers.WebsocketProvider('wss://infura.io/ws');
+  else if (config.ethereumNetwork === 'ganache') {
+    web3Provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545');
   }
-  else if (process.env.BC_NETWORK === 'ganache') {
-    provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545');
-  }
-  else if (process.env.BC_NETWORK === 'kovan') {
-    provider = new Web3.providers.WebsocketProvider('ws://' + process.env.ETHEREUM_FULL_NODE_KOVAN);   //connecting to digital ocean ethereum-kovan-node
+  else if (config.ethereumNetwork === 'kovan') {
+    web3Provider = new Web3.providers.WebsocketProvider('ws://' + config.ethereumFullNodeAddress);   //connecting to digital ocean ethereum-kovan-node
   }
   else {
-    console.error('provider ' + process.env.BC_NETWORK + ' couldn\'t be found');
+    console.error('Ethereum network ' + config.ethereumNetwork + ' couldn\'t be found');
   }
-  provider.on('connect', (e) => {
+  web3Provider.on('connect', (e) => {
     console.log('Web3 Provider connected to ' + web3.currentProvider.connection.url);
   });
-  provider.on('error', e => {
+  web3Provider.on('error', e => {
     console.error('Web3 Provider Error', e);
     web3 = new Web3(getBackendProvider());
   });
-  provider.on('end', e => {
+  web3Provider.on('end', e => {
     console.error('Web3 Provider Ended', e);
     web3 = new Web3(getBackendProvider());
   });
-  return provider;
+  return web3Provider;
 };
 
 getWeb3Instance();
