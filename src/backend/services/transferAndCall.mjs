@@ -1,13 +1,13 @@
-import {serviceContract, tokenContract} from "../../helpers/get-deployed-smart-contracts.mjs";
 import Web3PromiEvent from "web3-core-promievent";
 import {saveTransaction, updateTransaction} from "../db/transactions-services.mjs";
 import {TRANSACTION_STATUS} from "../db/transaction-states.mjs";
 import config from "../../config.json"
+import {serviceContracts, tokenContracts} from "../../helpers/get-contracts.mjs";
 
 
 export const sendTransferAndCallPreSignedTransaction = async (transactionObject) => {
 
-  serviceContract.events.TestEvent(
+  serviceContracts[0].contractObj.events.TestEvent(
     undefined,
     async (error, event) => {
       if (error) console.error(error);
@@ -17,7 +17,7 @@ export const sendTransferAndCallPreSignedTransaction = async (transactionObject)
 
   let promiEvent = Web3PromiEvent();
 
-  tokenContract.methods.transferAndCallPreSigned(
+  tokenContracts[transactionObject.tokenContractIndex].contractObj.methods.transferAndCallPreSigned(
     transactionObject.signature,
     transactionObject.from,
     transactionObject.to,

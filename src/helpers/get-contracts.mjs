@@ -1,9 +1,7 @@
 import GanacheServiceContractAddress from '../smartcontracts/constants/GanacheServiceContractAddress.json';
 import GanacheTokenContractAddress from '../smartcontracts/constants/GanacheTokenContractAddress.json';
-import Web3 from 'web3'
 import config from "../config.json"
-
-const web3 = new Web3();
+import web3 from "./web3Instance.mjs"
 
 export let tokenContracts = [];
 export let serviceContracts = [];
