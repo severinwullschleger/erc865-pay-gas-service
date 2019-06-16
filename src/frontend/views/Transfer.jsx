@@ -107,7 +107,6 @@ class Transfer extends Component {
       isToValid: null,
       value: null,
       isValueValid: null,
-      fee: null,
       nonce: null,
       privateKey: null
     }
@@ -166,7 +165,7 @@ class Transfer extends Component {
         this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
-        this.state.fee.toString(),
+        this.state.selectedTokenContract.value.feeTransfer.toString(),
         nonce.toString()]);
     console.log(input);
 
@@ -201,7 +200,7 @@ class Transfer extends Component {
       from: this.state.from,
       to: this.state.to,
       value: this.state.value,
-      fee: this.state.fee,
+      fee: this.state.selectedTokenContract.value.feeTransfer,
       nonce: this.state.nonce
     };
 
@@ -298,11 +297,11 @@ class Transfer extends Component {
             <AmountContainer>
               <div>
                 <Fee>
-                  {this.state.fee}
-                </Fee> DOS
+                  {this.state.selectedTokenContract && this.state.selectedTokenContract.value.feeTransfer }
+                </Fee> {this.state.selectedTokenContract && this.state.selectedTokenContract.value.symbol }
               </div>
               <Padded>
-                {'≈'}<Fee>0.20</Fee> ETH
+                {'≈'}<Fee>{this.state.selectedTokenContract && (this.state.selectedTokenContract.value.feeTransfer * this.state.selectedTokenContract.value.defaultTokenToEthPrice)}</Fee> ETH
               </Padded>
               <Padded>
                 {'≈'}<Fee>0.20</Fee> USD

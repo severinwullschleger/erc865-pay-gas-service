@@ -14,7 +14,7 @@ export const sendTransferPreSignedTransaction = async (transactionObject) => {
     transactionObject.from,
     transactionObject.to,
     transactionObject.value.toString(),
-    transactionObject.fee.toString(),
+    tokenContracts[transactionObject.tokenContractIndex].feeTransfer.toString(),
     transactionObject.nonce.toString()
   )
     .send({

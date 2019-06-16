@@ -117,7 +117,6 @@ class TransferAndCall extends Component {
       from: "",
       to: "",
       value: 0,
-      fee: null,
       nonce: null,
 
       // call data
@@ -167,7 +166,6 @@ class TransferAndCall extends Component {
       selectedTokenContract: tokenContracts[0],
       serviceContracts,
       // selectedServiceContract: serviceContracts[0],
-      fee: 5,
       nonce: 0
       // testing purposes
       ,
@@ -241,7 +239,7 @@ class TransferAndCall extends Component {
         this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
-        this.state.fee.toString(),
+        this.state.selectedTokenContract.value.feeTransferAndCall.toString(),
         nonce.toString(),
 
         // call parameters
@@ -281,7 +279,7 @@ class TransferAndCall extends Component {
       from: this.state.from,
       to: this.state.to,
       value: this.state.value,
-      fee: this.state.fee,
+      fee: this.state.selectedTokenContract.value.feeTransferAndCall,
       nonce: this.state.nonce,
       methodName: this.state.selectedMethod.value.signature,
       callParametersEncoded: this.state.callParametersEncoded
@@ -528,11 +526,11 @@ class TransferAndCall extends Component {
             <AmountContainer>
               <div>
                 <Fee>
-                  {this.state.fee}
+                  {this.state.selectedTokenContract && this.state.selectedTokenContract.value.feeTransferAndCall }
                 </Fee> {this.state.selectedTokenContract && this.state.selectedTokenContract.value.symbol }
               </div>
               <Padded>
-                {'≈'}<Fee>0.20</Fee> ETH
+                {'≈'}<Fee>{this.state.selectedTokenContract && (this.state.selectedTokenContract.value.feeTransferAndCall * this.state.selectedTokenContract.value.defaultTokenToEthPrice)}</Fee> ETH
               </Padded>
               <Padded>
                 {'≈'}<Fee>0.20</Fee> USD

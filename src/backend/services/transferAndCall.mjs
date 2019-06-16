@@ -22,7 +22,7 @@ export const sendTransferAndCallPreSignedTransaction = async (transactionObject)
     transactionObject.from,
     transactionObject.to,
     transactionObject.value.toString(),
-    transactionObject.fee.toString(),
+    tokenContracts[transactionObject.tokenContractIndex].feeTransferAndCall.toString(),
     transactionObject.nonce.toString(),
     transactionObject.methodName,
     transactionObject.callParametersEncoded
