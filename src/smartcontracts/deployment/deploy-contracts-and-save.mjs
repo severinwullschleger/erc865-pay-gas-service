@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {deployContracts} from './deploy-contracts.mjs';
+import {compileAndDeployContracts} from './compile-and-deploy-contracts.mjs';
 
 /*
   deployContracts will deploy all libraries specified in the input file and once they
@@ -7,15 +7,15 @@ import {deployContracts} from './deploy-contracts.mjs';
   the method returns a web3 instance of the smart contract itself.
  */
 export const deployContractsAndSaveAddressesAndABIs = async () => {
-  const [tokenContract, serviceContract] = await deployContracts();
+  const [tokenContract, serviceContract] = await compileAndDeployContracts();
 
   const fileNames = {
-    serviceContract: {
-      addressPath: 'src/smartcontracts/constants/GanacheServiceContractAddress.json',
-      abiPath: 'src/smartcontracts/constants/GanacheServiceContractABI.json',
-      abi: JSON.stringify(serviceContract._jsonInterface),
-      address: JSON.stringify(serviceContract.options.address)
-    },
+    // serviceContract: {
+    //   addressPath: 'src/smartcontracts/constants/GanacheServiceContractAddress.json',
+    //   abiPath: 'src/smartcontracts/constants/GanacheServiceContractABI.json',
+    //   abi: JSON.stringify(serviceContract._jsonInterface),
+    //   address: JSON.stringify(serviceContract.options.address)
+    // },
     tokenContract: {
       addressPath: 'src/smartcontracts/constants/GanacheTokenContractAddress.json',
       abiPath: 'src/smartcontracts/constants/GanacheTokenContractABI.json',
