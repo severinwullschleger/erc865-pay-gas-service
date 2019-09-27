@@ -19,10 +19,10 @@
     "react-select": "^2.4.3",
     "secp256k1": "^3.6.2",
     "sha3": "^2.0.0",
-    "solc": "0.4.24",
+    "solc": "^0.5.11",
     "styled-components": "^4.1.3",
-    "web3": "1.0.0-beta.37",
-    "web3-core-promievent": "1.0.0-beta.37"
+    "web3": "^1.2.1",
+    "web3-core-promievent": "^1.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -30,7 +30,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "cross-env NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/backend",
-    "condepl": "cross-env BC_NETWORK=ganache NODE_ENV=development node --experimental-modules src/smartcontracts/deployment/deployment-script.mjs",
+    "condepl": "cross-env BC_NETWORK=parity NODE_ENV=development node --experimental-modules src/smartcontracts/deployment/deployment-script.mjs",
     "dev": "cross-env BC_NETWORK=ganache NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/dev-script.mjs"
   },
   "eslintConfig": {
