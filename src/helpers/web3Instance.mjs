@@ -36,6 +36,9 @@ const getBackendProvider = () => {
   else if (config.ethereumNetwork === 'ganache') {
     web3Provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545');
   }
+  else if (config.ethereumNetwork === 'parity') {
+    web3Provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:8546');
+  }
   else if (config.ethereumNetwork === 'kovan') {
     web3Provider = new Web3.providers.WebsocketProvider('ws://' + config.ethereumFullNodeAddress);   //connecting to digital ocean ethereum-kovan-node
   }
