@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.11;
 
-import "./SafeMath.sol";
-import "./Utils.sol";
+import "SafeMath.sol";
+import "Utils.sol";
 
 contract ERC20 {
     function allowance(address owner, address spender) public view returns (uint256);
@@ -309,7 +309,8 @@ contract DOS is ERC20, ERC865Plus677ish {
         // call receiver
         require(Utils.isContract(_to));
 
-        bool success = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, msg.sender, _value), _args));
+        //bool success = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, msg.sender, _value), _args));
+        (bool success, bytes memory response) = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, msg.sender, _value), _args));
         require(success);
         return success;
     }
@@ -321,9 +322,9 @@ contract DOS is ERC20, ERC865Plus677ish {
         bytes32 hashedTx = Utils.transferPreSignedHashing(address(this), _to, _value, _fee, _nonce);
         address from = Utils.recover(hashedTx, _signature);
 
-//         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
-//         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
-//         signature is equal the specified one
+        //         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
+        //         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
+        //         signature is equal the specified one
         require(from == _from);
         require(from != address(0));
 
@@ -343,9 +344,9 @@ contract DOS is ERC20, ERC865Plus677ish {
         bytes32 hashedTx = Utils.transferAndCallPreSignedHashing(address(this), _to, _value, _fee, _nonce, _methodName, _args);
         address from = Utils.recover(hashedTx, _signature);
 
-//         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
-//         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
-//         signature is equal the specified one
+        //         if hashedTx does not fit to _signature Utils.recover resp. Solidity's ecrecover returns another (random) address,
+        //         if this returned address does have enough tokens, they would be transferred, therefor we check if the retrieved
+        //         signature is equal the specified one
         require(from == _from);
         require(from != address(0));
 
@@ -360,7 +361,7 @@ contract DOS is ERC20, ERC865Plus677ish {
         require(Utils.isContract(_to));
 
         //call on behalf of from and not msg.sender
-        bool success = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, from, _value), _args));
+        (bool success, bytes memory response) = _to.call(abi.encodePacked(abi.encodeWithSelector(_methodName, from, _value), _args));
         require(success);
         return success;
     }

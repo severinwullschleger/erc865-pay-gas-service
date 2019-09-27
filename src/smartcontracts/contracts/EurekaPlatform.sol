@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.11;
 
-import "./SafeMath.sol";
-import "./DOS.sol";
+import "SafeMath.sol";
+import "DOS.sol";
 
 
 contract EurekaPlatform {
@@ -214,11 +214,11 @@ contract EurekaPlatform {
         address reviewedBy;
     }
 
-    function getLinkedArticles(bytes32 hash) public view returns (bytes32[] linkedArticles) {
+    function getLinkedArticles(bytes32 hash) public view returns (bytes32[] memory linkedArticles) {
         linkedArticles = articleVersions[hash].linkedArticles;
     }
 
-    function getAuthors(bytes32 hash) public view returns (address[] authors) {
+    function getAuthors(bytes32 hash) public view returns (address[] memory authors) {
         authors = articleVersions[hash].authors;
     }
 
@@ -252,7 +252,7 @@ contract EurekaPlatform {
         emit ExpertReviewerSignUp(msg.sender, expertReviewer, block.timestamp);
     }
 
-    function signUpExpertReviewers(address[] expertReviewers) public {
+    function signUpExpertReviewers(address[] memory expertReviewers) public {
 
         require(msg.sender == contractOwner, "msg.sender must be the contract owner to call this function");
 
@@ -276,27 +276,27 @@ contract EurekaPlatform {
     */
     event SubmissionProcessStart(uint256 submissionId, address submissionOwner, bytes32 articleHash, bytes32 articleURL, uint256 stateTimestamp);
 
-//    function startSubmissionProcess(
-//        address _from,
-//        uint256 _value,
-//        bytes32 _articleHash, bytes32 _articleURL, address[] _authors,
-//        uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) public {
-//
-//        //        require(msg.sender == address(eurekaTokenContract));
-//        require(_value == submissionFee, 'transferred amount needs to equal the submission fee');
-//
-//        uint submissionId = submissionCounter++;
-//        ArticleSubmission storage submission = articleSubmissions[submissionId];
-//
-//        submission.submissionId = submissionId;
-//        submission.submissionOwner = _from;
-//
-//        submitArticleVersion(submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
-//
-//        submission.submissionState = SubmissionState.OPEN;
-//        submission.stateTimestamp = block.timestamp;
-//        emit SubmissionProcessStart(submission.submissionId, submission.submissionOwner, _articleHash, _articleURL, block.timestamp);
-//    }
+    //    function startSubmissionProcess(
+    //        address _from,
+    //        uint256 _value,
+    //        bytes32 _articleHash, bytes32 _articleURL, address[] _authors,
+    //        uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) public {
+    //
+    //        //        require(msg.sender == address(eurekaTokenContract));
+    //        require(_value == submissionFee, 'transferred amount needs to equal the submission fee');
+    //
+    //        uint submissionId = submissionCounter++;
+    //        ArticleSubmission storage submission = articleSubmissions[submissionId];
+    //
+    //        submission.submissionId = submissionId;
+    //        submission.submissionOwner = _from;
+    //
+    //        submitArticleVersion(submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
+    //
+    //        submission.submissionState = SubmissionState.OPEN;
+    //        submission.stateTimestamp = block.timestamp;
+    //        emit SubmissionProcessStart(submission.submissionId, submission.submissionOwner, _articleHash, _articleURL, block.timestamp);
+    //    }
 
     event TestEvent (uint256 first, bytes32 second);
     function serviceContractTestFunction(address _from, uint256 _value, uint256 first, bytes32 second) public {
@@ -304,7 +304,7 @@ contract EurekaPlatform {
     }
 
     function submitArticleVersion(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL,
-        address[] _authors, uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) private {
+        address[] memory _authors, uint16[] memory _authorContributionRatios, bytes32[] memory _linkedArticles, uint16[] memory _linkedArticlesSplitRatios) private {
 
         ArticleVersion storage article = articleVersions[_articleHash];
         require(article.submissionId == 0, 'Article was already uploaded.');
@@ -661,7 +661,7 @@ contract EurekaPlatform {
         emit DeclineArticleVersionAndClose(_articleHash, msg.sender, block.timestamp);
     }
 
-    function countSignedUpForReviewing(bytes32 _articleHash, address[] _reviewers) view private returns (uint count) {
+    function countSignedUpForReviewing(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
         for (uint i = 0; i < _reviewers.length; i++) {
             if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.SIGNED_UP_FOR_REVIEWING)
                 count++;
@@ -669,7 +669,7 @@ contract EurekaPlatform {
         return count;
     }
 
-    function countAcceptedReviews(bytes32 _articleHash, address[] _reviewers) view private returns (uint count) {
+    function countAcceptedReviews(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
         count = 0;
         for (uint i = 0; i < _reviewers.length; i++) {
             if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED)
@@ -678,7 +678,7 @@ contract EurekaPlatform {
         return count;
     }
 
-    function countReviewsWithMajorIssues(bytes32 _articleHash, address[] _reviewers) view private returns (uint count) {
+    function countReviewsWithMajorIssues(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
         for (uint i = 0; i < _reviewers.length; i++) {
             if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED
             && reviews[_articleHash][_reviewers[i]].articleHasMajorIssues)
@@ -708,8 +708,8 @@ contract EurekaPlatform {
     }
 
     event NewReviewRoundOpened(uint256 submissionId, bytes32 articleHash, bytes32 articleUrl, uint256 stateTimestamp);
-    function openNewReviewRound(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL, address[] _authors,
-        uint16[] _authorContributionRatios, bytes32[] _linkedArticles, uint16[] _linkedArticlesSplitRatios) public {
+    function openNewReviewRound(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL, address[] memory _authors,
+        uint16[] memory _authorContributionRatios, bytes32[] memory _linkedArticles, uint16[] memory _linkedArticlesSplitRatios) public {
 
         ArticleSubmission storage submission = articleSubmissions[_submissionId];
         require(msg.sender == submission.submissionOwner, "only the submission process owner can submit a new article version.");
@@ -765,10 +765,10 @@ contract EurekaPlatform {
             }
         }
 
-        articleVersion = articleVersions[submission.versions[submission.versions.length - 1]];
+        ArticleVersion memory articleVersion = articleVersions[submission.versions[submission.versions.length - 1]];
         //reward linked articles if article is accepted
         if (articleVersion.versionState == ArticleVersionState.ACCEPTED) {
-            for (i = 0; i < articleVersion.linkedArticles.length; i++) {
+            for (uint i = 0; i < articleVersion.linkedArticles.length; i++) {
 
                 ArticleVersion memory linkedArticle = articleVersions[articleVersion.linkedArticles[i]];
                 uint rewardForArticle = linkedArticlesReward.mul(articleVersion.linkedArticlesSplitRatios[i]).div(10000);
@@ -792,7 +792,7 @@ contract EurekaPlatform {
         emit SubmissionProcessClosed(_submissionId, block.timestamp);
     }
 
-    function rewardEditorApprovedReviews(ArticleVersion _articleVersion, uint _reviewRounds) private {
+    function rewardEditorApprovedReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
         uint rewardedReviewers = 0;
         for (uint i = 0; i < _articleVersion.editorApprovedReviews.length; i++) {
             if (rewardedReviewers < maxAmountOfRewardedEditorApprovedReviews) {
@@ -811,7 +811,7 @@ contract EurekaPlatform {
         }
     }
 
-    function rewardCommunityReviews(ArticleVersion _articleVersion, uint _reviewRounds) private {
+    function rewardCommunityReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
         uint rewardedReviewers = 0;
         for (uint i = 0; i < _articleVersion.communityReviews.length; i++) {
             if (rewardedReviewers < maxAmountOfRewardedCommunityReviews) {
