@@ -1,7 +1,7 @@
 import getEthereumAccounts from "../../helpers/get-ethereum-accounts.mjs";
-import web3 from '../../helpers/web3Instance.mjs';
+import web3 from "../../helpers/web3Instance.mjs";
 
-export const mintTokens = async (tokenContract) => {
+export const mintTokens = async tokenContract => {
   const accounts = await getEthereumAccounts(web3);
   const contractOwner = accounts[0];
   let tokenAmounts = [];
@@ -11,24 +11,24 @@ export const mintTokens = async (tokenContract) => {
 
   return tokenContract.methods.mint(accounts, tokenAmounts).send({
     from: contractOwner,
-    gas: 80000000
+    gas: 8000000
   });
 };
 
-export const setAdmins = async (tokenContract) => {
+export const setAdmins = async tokenContract => {
   const accounts = await getEthereumAccounts(web3);
   const contractOwner = accounts[0];
   return tokenContract.methods.setAdmin(accounts[0], accounts[1]).send({
     from: contractOwner,
-    gas: 80000000
+    gas: 8000000
   });
 };
 
-export const finishMinting = async (tokenContract) => {
+export const finishMinting = async tokenContract => {
   const accounts = await getEthereumAccounts(web3);
   const contractOwner = accounts[0];
   return tokenContract.methods.finishMinting().send({
     from: contractOwner,
-    gas: 80000000
+    gas: 8000000
   });
 };
