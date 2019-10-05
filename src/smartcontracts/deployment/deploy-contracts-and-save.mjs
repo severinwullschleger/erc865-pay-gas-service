@@ -10,12 +10,12 @@ export const deployContractsAndSaveAddressesAndABIs = async () => {
   const [tokenContract, serviceContract] = await compileAndDeployContracts();
 
   const fileNames = {
-    // serviceContract: {
-    //   addressPath: 'src/smartcontracts/constants/GanacheServiceContractAddress.json',
-    //   abiPath: 'src/smartcontracts/constants/GanacheServiceContractABI.json',
-    //   abi: JSON.stringify(serviceContract._jsonInterface),
-    //   address: JSON.stringify(serviceContract.options.address)
-    // },
+    serviceContract: {
+      addressPath: 'src/smartcontracts/constants/GanacheServiceContractAddress.json',
+      abiPath: 'src/smartcontracts/constants/GanacheServiceContractABI.json',
+      abi: JSON.stringify(serviceContract._jsonInterface),
+      address: JSON.stringify(serviceContract.options.address)
+    },
     tokenContract: {
       addressPath: 'src/smartcontracts/constants/GanacheTokenContractAddress.json',
       abiPath: 'src/smartcontracts/constants/GanacheTokenContractABI.json',

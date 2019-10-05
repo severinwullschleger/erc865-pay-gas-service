@@ -15,15 +15,15 @@ export const getSmartContractInputs = () => {
           "utf-8"
         )
       },
-      // "EurekaPlatform.sol": {
-      //   content: fs.readFileSync(
-      //     path.resolve(
-      //       DIR_NAME,
-      //       "src/smartcontracts/contracts/EurekaPlatform.sol"
-      //     ),
-      //     "utf-8"
-      //   )
-      // }
+      "EurekaPlatform.sol": {
+        content: fs.readFileSync(
+          path.resolve(
+            DIR_NAME,
+            "src/smartcontracts/contracts/EurekaPlatform.sol"
+          ),
+          "utf-8"
+        )
+      }
     },
     settings: {
       outputSelection: {
