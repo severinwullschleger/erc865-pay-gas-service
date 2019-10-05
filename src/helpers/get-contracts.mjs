@@ -10,7 +10,7 @@ export let serviceContracts = [];
 const setContracts = () => {
 
   if (tokenContracts.length === 0) {
-    if (config.ethereumNetwork !== 'ganache') {
+    if (config.ethereumNetwork !== 'ganache' && config.ethereumNetwork !== 'parity') {
 
       tokenContracts = config.acceptedTokens.map(c => {
         return {

@@ -5,4 +5,4 @@ export const isServiceContractAddress = (serviceContracts, address) => {
   });
 
   return addresses.includes(address);
-}
+};
