@@ -1,7 +1,7 @@
 pragma solidity ^0.5.11;
 
-import "SafeMath.sol";
-import "DOS.sol";
+import "./SafeMath.sol";
+import "./DOS.sol";
 
 
 contract EurekaPlatform {
@@ -401,7 +401,7 @@ contract EurekaPlatform {
         article.versionState = ArticleVersionState.DECLINED_SANITY_NOTOK;
         article.stateTimestamp = block.timestamp;
 
-        requestNewReviewRound(article.submissionId);
+        //requestNewReviewRound(article.submissionId);
         emit SanityIsNotOk(articleVersions[_articleHash].submissionId, _articleHash, block.timestamp);
     }
 
@@ -577,262 +577,262 @@ contract EurekaPlatform {
         emit ReviewerRejected(_articleHash, _reviewerAddress, block.timestamp);
     }
 
-    event ArticleVersionIsAccepted(bytes32 articleHash, address editor, uint256 stateTimestamp);
+//    event ArticleVersionIsAccepted(bytes32 articleHash, address editor, uint256 stateTimestamp);
+//
+//    function acceptArticleVersion(bytes32 _articleHash) public {
+//
+//        ArticleVersion storage article = articleVersions[_articleHash];
+//
+//        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
+//
+//        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
+//
+//        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
+//            "the article doesn't have enough accepted editor approved reviews to be accepted.");
+//        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
+//            "the article doesn't have enough accepted community reviews to be accepted.");
+//
+//        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
+//            "this method can't be called. there are users still working on reviews.");
+//
+//        require(countReviewsWithMajorIssues(article.articleHash, article.editorApprovedReviews) == 0,
+//            "the article needs to be corrected.");
+//        require(countReviewsWithMajorIssues(article.articleHash, article.communityReviews) == 0,
+//            "the article needs to be corrected.");
+//
+//        article.versionState = ArticleVersionState.ACCEPTED;
+//        article.stateTimestamp = block.timestamp;
+//
+//        //closeSubmissionProcess(article.submissionId);
+//        emit ArticleVersionIsAccepted(_articleHash, msg.sender, block.timestamp);
+//    }
+//
+//    event DeclineArticleVersion(bytes32 articleHash, address editor, uint256 stateTimestamp);
+//
+//    function declineArticleVersion(bytes32 _articleHash) public {
+//
+//        ArticleVersion storage article = articleVersions[_articleHash];
+//
+//        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
+//
+//        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
+//
+//
+//        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
+//            "the article doesn't have enough accepted editor approved reviews to be declined.");
+//        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
+//            "the article doesn't have enough accepted community reviews to be declined.");
+//
+//        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
+//            "this method can't be called. there are users still working on reviews.");
+//
+//        article.versionState = ArticleVersionState.DECLINED;
+//
+//        //if (countRewardedReviewRounds(article.submissionId) >= maxReviewRounds)
+//        //closeSubmissionProcess(article.submissionId);
+//        //else
+//        requestNewReviewRound(article.submissionId);
+//
+//        emit DeclineArticleVersion(_articleHash, msg.sender, block.timestamp);
+//    }
+//
+//    event DeclineArticleVersionAndClose(bytes32 articleHash, address editor, uint256 stateTimestamp);
+//
+//    function declineArticleVersionAndClose(bytes32 _articleHash) public {
+//
+//        ArticleVersion storage article = articleVersions[_articleHash];
+//
+//        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
+//
+//        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
+//
+//
+//        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
+//            "the article doesn't have enough accepted editor approved reviews to be declined.");
+//        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
+//            "the article doesn't have enough accepted community reviews to be declined.");
+//
+//        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
+//            "this method can't be called. there are users still working on reviews.");
+//
+//        article.versionState = ArticleVersionState.DECLINED;
+//
+//        //closeSubmissionProcess(article.submissionId);
+//        emit DeclineArticleVersionAndClose(_articleHash, msg.sender, block.timestamp);
+//    }
+//
+//    function countSignedUpForReviewing(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
+//        for (uint i = 0; i < _reviewers.length; i++) {
+//            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.SIGNED_UP_FOR_REVIEWING)
+//                count++;
+//        }
+//        return count;
+//    }
 
-    function acceptArticleVersion(bytes32 _articleHash) public {
+//    function countAcceptedReviews(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
+//        count = 0;
+//        for (uint i = 0; i < _reviewers.length; i++) {
+//            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED)
+//                count++;
+//        }
+//        return count;
+//    }
+//
+//    function countReviewsWithMajorIssues(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
+//        for (uint i = 0; i < _reviewers.length; i++) {
+//            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED
+//            && reviews[_articleHash][_reviewers[i]].articleHasMajorIssues)
+//                count++;
+//        }
+//        return count;
+//    }
 
-        ArticleVersion storage article = articleVersions[_articleHash];
+//    // only counts the articles which went through a review process and therefore have the state DECLINED
+//    // does not consider the versions with state DECLINED_SANITY_NOTOK
+//    function countRewardedReviewRounds(uint256 _submissionId) view private returns (uint count) {
+//        bytes32[] memory versions = articleSubmissions[_submissionId].versions;
+//        for (uint i = 0; i < versions.length; i++) {
+//            if (articleVersions[versions[i]].versionState == ArticleVersionState.DECLINED
+//            || articleVersions[versions[i]].versionState == ArticleVersionState.ACCEPTED)
+//                count++;
+//        }
+//        return count;
+//    }
+//
+//    event NewReviewRoundRequested(uint256 submissionId, uint256 stateTimestamp);
+//    function requestNewReviewRound(uint256 _submissionId) private {
+//
+//        articleSubmissions[_submissionId].submissionState = SubmissionState.NEW_REVIEW_ROUND_REQUESTED;
+//        articleSubmissions[_submissionId].stateTimestamp = block.timestamp;
+//        emit NewReviewRoundRequested(_submissionId, block.timestamp);
+//    }
 
-        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
+//    event NewReviewRoundOpened(uint256 submissionId, bytes32 articleHash, bytes32 articleUrl, uint256 stateTimestamp);
+//    function openNewReviewRound(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL, address[] memory _authors,
+//        uint16[] memory _authorContributionRatios, bytes32[] memory _linkedArticles, uint16[] memory _linkedArticlesSplitRatios) public {
+//
+//        ArticleSubmission storage submission = articleSubmissions[_submissionId];
+//        require(msg.sender == submission.submissionOwner, "only the submission process owner can submit a new article version.");
+//        require(submission.submissionState == SubmissionState.NEW_REVIEW_ROUND_REQUESTED,
+//            "this method can't be called. the submission process state must be NEW_REVIEW_ROUND_REQUESTED.");
+//
+//        submitArticleVersion(_submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
+//
+//        submission.submissionState = SubmissionState.EDITOR_ASSIGNED;
+//        submission.stateTimestamp = block.timestamp;
+//        emit NewReviewRoundOpened(_submissionId, _articleHash, _articleURL, block.timestamp);
+//    }
 
-        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
+//    event NewReviewRoundDeclined(uint256 submissionId, uint256 stateTimestamp);
 
-        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
-            "the article doesn't have enough accepted editor approved reviews to be accepted.");
-        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
-            "the article doesn't have enough accepted community reviews to be accepted.");
+    //    function declineNewReviewRound(uint256 _submissionId) public {
+    //
+    //        require(msg.sender == articleSubmissions[_submissionId].submissionOwner
+    //        || msg.sender == contractOwner,
+    //            "only the submission process owner can call this method");
+    //        require(articleSubmissions[_submissionId].submissionState == SubmissionState.NEW_REVIEW_ROUND_REQUESTED,
+    //            "this method can't be called. the submission process state must be NEW_REVIEW_ROUND_REQUESTED.");
+    //
+    //
+    //        //        if(msg.sender == contractOwner && (block.timestamp - NO_NEW_REVIEW_ROUND_INTERVAL - articleSubmissions[_submissionId].stateTimestamp) > 0) {
+    //        //            revert("Current time has not exceeded the given time-interval. The reviewer cannot be removed yet");
+    //        //        }
+    //
+    //        //closeSubmissionProcess(_submissionId);
+    //        emit NewReviewRoundDeclined(_submissionId, block.timestamp);
+    //    }
 
-        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
-            "this method can't be called. there are users still working on reviews.");
+    //    event SubmissionProcessClosed(uint256 submissionId, uint256 stateTimestamp);
+    //    function closeSubmissionProcess(uint256 _submissionId) private {
+    //
+    //        ArticleSubmission storage submission = articleSubmissions[_submissionId];
+    //
+    //        // transfer rewards to science matters foundation and editor
+    //        require(eurekaTokenContract.transfer(contractOwner, sciencemattersFoundationReward));
+    //        require(eurekaTokenContract.transfer(submission.editor, editorReward));
+    //
+    //        // counts how many reviewRounds happened to devide the reward later
+    //        uint reviewRounds = countRewardedReviewRounds(_submissionId);
+    //
+    //        //distributes the rewards to all reviewers, for every round a seperate transfer
+    //        for (uint i = 0; i < submission.versions.length; i++) {
+    //            ArticleVersion memory articleVersion = articleVersions[submission.versions[i]];
+    //            if (articleVersion.versionState == ArticleVersionState.DECLINED
+    //            || articleVersion.versionState == ArticleVersionState.ACCEPTED) {
+    //
+    //                //rewardEditorApprovedReviews(articleVersion, reviewRounds);
+    //                //rewardCommunityReviews(articleVersion, reviewRounds);
+    //            }
+    //        }
+    //
+    //        ArticleVersion memory articleVersion = articleVersions[submission.versions[submission.versions.length - 1]];
+    //        //reward linked articles if article is accepted
+    //        if (articleVersion.versionState == ArticleVersionState.ACCEPTED) {
+    //            for (uint i = 0; i < articleVersion.linkedArticles.length; i++) {
+    //
+    //                ArticleVersion memory linkedArticle = articleVersions[articleVersion.linkedArticles[i]];
+    //                uint rewardForArticle = linkedArticlesReward.mul(articleVersion.linkedArticlesSplitRatios[i]).div(10000);
+    //
+    //                for (uint a=0; a < linkedArticle.authors.length; a++) {
+    //
+    //                    require(
+    //                        eurekaTokenContract.transfer(
+    //                            linkedArticle.authors[a],
+    //                        // reward for article is splitted relatively to the contribution
+    //                            rewardForArticle.mul(linkedArticle.authorContributionRatios[a]).div(10000)
+    //                        )
+    //                    );
+    //                }
+    //            }
+    //
+    //            //TODO: reward invalidation work, check also if time is already up
+    //        }
+    //        submission.submissionState = SubmissionState.CLOSED;
+    //        submission.stateTimestamp = block.timestamp;
+    //        emit SubmissionProcessClosed(_submissionId, block.timestamp);
+    //    }
 
-        require(countReviewsWithMajorIssues(article.articleHash, article.editorApprovedReviews) == 0,
-            "the article needs to be corrected.");
-        require(countReviewsWithMajorIssues(article.articleHash, article.communityReviews) == 0,
-            "the article needs to be corrected.");
+    //    function rewardEditorApprovedReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
+    //        uint rewardedReviewers = 0;
+    //        for (uint i = 0; i < _articleVersion.editorApprovedReviews.length; i++) {
+    //            if (rewardedReviewers < maxAmountOfRewardedEditorApprovedReviews) {
+    //                if (reviews[_articleVersion.articleHash][_articleVersion.editorApprovedReviews[i]].reviewState == ReviewState.ACCEPTED) {
+    //                    // transfer reward to editor approved reviewer
+    //                    require(
+    //                        eurekaTokenContract.transfer(
+    //                            _articleVersion.editorApprovedReviews[i],
+    //                            editorApprovedReviewerRewardPerReviewer.div(_reviewRounds)
+    //                        ));
+    //                    rewardedReviewers++;
+    //                }
+    //            }
+    //            else
+    //                return;
+    //        }
+    //    }
 
-        article.versionState = ArticleVersionState.ACCEPTED;
-        article.stateTimestamp = block.timestamp;
-
-        closeSubmissionProcess(article.submissionId);
-        emit ArticleVersionIsAccepted(_articleHash, msg.sender, block.timestamp);
-    }
-
-    event DeclineArticleVersion(bytes32 articleHash, address editor, uint256 stateTimestamp);
-
-    function declineArticleVersion(bytes32 _articleHash) public {
-
-        ArticleVersion storage article = articleVersions[_articleHash];
-
-        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
-
-        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
-
-
-        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
-            "the article doesn't have enough accepted editor approved reviews to be declined.");
-        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
-            "the article doesn't have enough accepted community reviews to be declined.");
-
-        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
-            "this method can't be called. there are users still working on reviews.");
-
-        article.versionState = ArticleVersionState.DECLINED;
-
-        if (countRewardedReviewRounds(article.submissionId) >= maxReviewRounds)
-            closeSubmissionProcess(article.submissionId);
-        else
-            requestNewReviewRound(article.submissionId);
-
-        emit DeclineArticleVersion(_articleHash, msg.sender, block.timestamp);
-    }
-
-    event DeclineArticleVersionAndClose(bytes32 articleHash, address editor, uint256 stateTimestamp);
-
-    function declineArticleVersionAndClose(bytes32 _articleHash) public {
-
-        ArticleVersion storage article = articleVersions[_articleHash];
-
-        require(articleSubmissions[article.submissionId].editor == msg.sender, "msg.sender must be the editor of this submission process");
-
-        require(article.versionState <= ArticleVersionState.OPEN_FOR_ALL_REVIEWERS, "this method can't be called. the article version must be sanity checked and must not be already closed.");
-
-
-        require(countAcceptedReviews(article.articleHash, article.editorApprovedReviews) >= minAmountOfEditorApprovedReviews,
-            "the article doesn't have enough accepted editor approved reviews to be declined.");
-        require(countAcceptedReviews(article.articleHash, article.communityReviews) >= minAmountOfCommunityReviews,
-            "the article doesn't have enough accepted community reviews to be declined.");
-
-        require(countSignedUpForReviewing(article.articleHash, article.editorApprovedReviews) == 0,
-            "this method can't be called. there are users still working on reviews.");
-
-        article.versionState = ArticleVersionState.DECLINED;
-
-        closeSubmissionProcess(article.submissionId);
-        emit DeclineArticleVersionAndClose(_articleHash, msg.sender, block.timestamp);
-    }
-
-    function countSignedUpForReviewing(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
-        for (uint i = 0; i < _reviewers.length; i++) {
-            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.SIGNED_UP_FOR_REVIEWING)
-                count++;
-        }
-        return count;
-    }
-
-    function countAcceptedReviews(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
-        count = 0;
-        for (uint i = 0; i < _reviewers.length; i++) {
-            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED)
-                count++;
-        }
-        return count;
-    }
-
-    function countReviewsWithMajorIssues(bytes32 _articleHash, address[] memory _reviewers) view private returns (uint count) {
-        for (uint i = 0; i < _reviewers.length; i++) {
-            if (reviews[_articleHash][_reviewers[i]].reviewState == ReviewState.ACCEPTED
-            && reviews[_articleHash][_reviewers[i]].articleHasMajorIssues)
-                count++;
-        }
-        return count;
-    }
-
-    // only counts the articles which went through a review process and therefore have the state DECLINED
-    // does not consider the versions with state DECLINED_SANITY_NOTOK
-    function countRewardedReviewRounds(uint256 _submissionId) view private returns (uint count) {
-        bytes32[] memory versions = articleSubmissions[_submissionId].versions;
-        for (uint i = 0; i < versions.length; i++) {
-            if (articleVersions[versions[i]].versionState == ArticleVersionState.DECLINED
-            || articleVersions[versions[i]].versionState == ArticleVersionState.ACCEPTED)
-                count++;
-        }
-        return count;
-    }
-
-    event NewReviewRoundRequested(uint256 submissionId, uint256 stateTimestamp);
-    function requestNewReviewRound(uint256 _submissionId) private {
-
-        articleSubmissions[_submissionId].submissionState = SubmissionState.NEW_REVIEW_ROUND_REQUESTED;
-        articleSubmissions[_submissionId].stateTimestamp = block.timestamp;
-        emit NewReviewRoundRequested(_submissionId, block.timestamp);
-    }
-
-    event NewReviewRoundOpened(uint256 submissionId, bytes32 articleHash, bytes32 articleUrl, uint256 stateTimestamp);
-    function openNewReviewRound(uint256 _submissionId, bytes32 _articleHash, bytes32 _articleURL, address[] memory _authors,
-        uint16[] memory _authorContributionRatios, bytes32[] memory _linkedArticles, uint16[] memory _linkedArticlesSplitRatios) public {
-
-        ArticleSubmission storage submission = articleSubmissions[_submissionId];
-        require(msg.sender == submission.submissionOwner, "only the submission process owner can submit a new article version.");
-        require(submission.submissionState == SubmissionState.NEW_REVIEW_ROUND_REQUESTED,
-            "this method can't be called. the submission process state must be NEW_REVIEW_ROUND_REQUESTED.");
-
-        submitArticleVersion(_submissionId, _articleHash, _articleURL, _authors, _authorContributionRatios, _linkedArticles, _linkedArticlesSplitRatios);
-
-        submission.submissionState = SubmissionState.EDITOR_ASSIGNED;
-        submission.stateTimestamp = block.timestamp;
-        emit NewReviewRoundOpened(_submissionId, _articleHash, _articleURL, block.timestamp);
-    }
-
-    event NewReviewRoundDeclined(uint256 submissionId, uint256 stateTimestamp);
-
-    function declineNewReviewRound(uint256 _submissionId) public {
-
-        require(msg.sender == articleSubmissions[_submissionId].submissionOwner
-        || msg.sender == contractOwner,
-            "only the submission process owner can call this method");
-        require(articleSubmissions[_submissionId].submissionState == SubmissionState.NEW_REVIEW_ROUND_REQUESTED,
-            "this method can't be called. the submission process state must be NEW_REVIEW_ROUND_REQUESTED.");
-
-
-        //        if(msg.sender == contractOwner && (block.timestamp - NO_NEW_REVIEW_ROUND_INTERVAL - articleSubmissions[_submissionId].stateTimestamp) > 0) {
-        //            revert("Current time has not exceeded the given time-interval. The reviewer cannot be removed yet");
-        //        }
-
-        closeSubmissionProcess(_submissionId);
-        emit NewReviewRoundDeclined(_submissionId, block.timestamp);
-    }
-
-    event SubmissionProcessClosed(uint256 submissionId, uint256 stateTimestamp);
-    function closeSubmissionProcess(uint256 _submissionId) private {
-
-        ArticleSubmission storage submission = articleSubmissions[_submissionId];
-
-        // transfer rewards to science matters foundation and editor
-        require(eurekaTokenContract.transfer(contractOwner, sciencemattersFoundationReward));
-        require(eurekaTokenContract.transfer(submission.editor, editorReward));
-
-        // counts how many reviewRounds happened to devide the reward later
-        uint reviewRounds = countRewardedReviewRounds(_submissionId);
-
-        //distributes the rewards to all reviewers, for every round a seperate transfer
-        for (uint i = 0; i < submission.versions.length; i++) {
-            ArticleVersion memory articleVersion = articleVersions[submission.versions[i]];
-            if (articleVersion.versionState == ArticleVersionState.DECLINED
-            || articleVersion.versionState == ArticleVersionState.ACCEPTED) {
-
-                rewardEditorApprovedReviews(articleVersion, reviewRounds);
-                rewardCommunityReviews(articleVersion, reviewRounds);
-            }
-        }
-
-        ArticleVersion memory articleVersion = articleVersions[submission.versions[submission.versions.length - 1]];
-        //reward linked articles if article is accepted
-        if (articleVersion.versionState == ArticleVersionState.ACCEPTED) {
-            for (uint i = 0; i < articleVersion.linkedArticles.length; i++) {
-
-                ArticleVersion memory linkedArticle = articleVersions[articleVersion.linkedArticles[i]];
-                uint rewardForArticle = linkedArticlesReward.mul(articleVersion.linkedArticlesSplitRatios[i]).div(10000);
-
-                for (uint a=0; a < linkedArticle.authors.length; a++) {
-
-                    require(
-                        eurekaTokenContract.transfer(
-                            linkedArticle.authors[a],
-                        // reward for article is splitted relatively to the contribution
-                            rewardForArticle.mul(linkedArticle.authorContributionRatios[a]).div(10000)
-                        )
-                    );
-                }
-            }
-
-            //TODO: reward invalidation work, check also if time is already up
-        }
-        submission.submissionState = SubmissionState.CLOSED;
-        submission.stateTimestamp = block.timestamp;
-        emit SubmissionProcessClosed(_submissionId, block.timestamp);
-    }
-
-    function rewardEditorApprovedReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
-        uint rewardedReviewers = 0;
-        for (uint i = 0; i < _articleVersion.editorApprovedReviews.length; i++) {
-            if (rewardedReviewers < maxAmountOfRewardedEditorApprovedReviews) {
-                if (reviews[_articleVersion.articleHash][_articleVersion.editorApprovedReviews[i]].reviewState == ReviewState.ACCEPTED) {
-                    // transfer reward to editor approved reviewer
-                    require(
-                        eurekaTokenContract.transfer(
-                            _articleVersion.editorApprovedReviews[i],
-                            editorApprovedReviewerRewardPerReviewer.div(_reviewRounds)
-                        ));
-                    rewardedReviewers++;
-                }
-            }
-            else
-                return;
-        }
-    }
-
-    function rewardCommunityReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
-        uint rewardedReviewers = 0;
-        for (uint i = 0; i < _articleVersion.communityReviews.length; i++) {
-            if (rewardedReviewers < maxAmountOfRewardedCommunityReviews) {
-                if (reviews[_articleVersion.articleHash][_articleVersion.communityReviews[i]].reviewState == ReviewState.ACCEPTED) {
-                    // reward community reviewer
-                    require(
-                        eurekaTokenContract.transfer(
-                            _articleVersion.communityReviews[i],
-                            communityReviewerRewardPerReviewer.div(_reviewRounds)
-                        ));
-                    // reward the reviewer of the community review
-                    require(
-                        eurekaTokenContract.transfer(
-                            reviews[_articleVersion.articleHash][_articleVersion.communityReviews[i]].reviewedBy,
-                            secondReviewerRewardPerReviewer.div(_reviewRounds)
-                        ));
-                    rewardedReviewers++;
-                }
-            }
-            else
-                return;
-        }
-    }
+    //    function rewardCommunityReviews(ArticleVersion memory _articleVersion, uint _reviewRounds) private {
+    //        uint rewardedReviewers = 0;
+    //        for (uint i = 0; i < _articleVersion.communityReviews.length; i++) {
+    //            if (rewardedReviewers < maxAmountOfRewardedCommunityReviews) {
+    //                if (reviews[_articleVersion.articleHash][_articleVersion.communityReviews[i]].reviewState == ReviewState.ACCEPTED) {
+    //                    // reward community reviewer
+    //                    require(
+    //                        eurekaTokenContract.transfer(
+    //                            _articleVersion.communityReviews[i],
+    //                            communityReviewerRewardPerReviewer.div(_reviewRounds)
+    //                        ));
+    //                    // reward the reviewer of the community review
+    //                    require(
+    //                        eurekaTokenContract.transfer(
+    //                            reviews[_articleVersion.articleHash][_articleVersion.communityReviews[i]].reviewedBy,
+    //                            secondReviewerRewardPerReviewer.div(_reviewRounds)
+    //                        ));
+    //                    rewardedReviewers++;
+    //                }
+    //            }
+    //            else
+    //                return;
+    //        }
+    //    }
 }

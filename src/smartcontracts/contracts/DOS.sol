@@ -1,7 +1,7 @@
 pragma solidity ^0.5.11;
 
-import "SafeMath.sol";
-import "Utils.sol";
+import "./SafeMath.sol";
+import "./Utils.sol";
 
 contract ERC20 {
     function allowance(address owner, address spender) public view returns (uint256);
