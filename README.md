@@ -5,6 +5,11 @@ sudo parity --config dev --unlock 0x00a329c0648769a73afac7f9381e08fb43dbea72 --p
 ```
 (The password file includes an empty line.)
 
+#### Connect remix with localhost
+```
+remixd -s C:\Users\sever\GitHub\erc865-pay-gas-service\src\smartcontracts\contracts --remix-ide https://remix.ethereum.org
+```
+
 
 ### Notes during developement:
 * Problems with signing method of web3.js: It includes a hashing, which is not done in the ERC-865 token contracts. This leaded to different hashes and therefore different values.
