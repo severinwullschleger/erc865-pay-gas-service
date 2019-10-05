@@ -8,13 +8,10 @@ import Icon from '../icons/Icon.js';
 import Ink from 'react-ink';
 
 const IconContainer = styled.div`
-  width: ${props => (props.small ? null : '125px')};
+  width: 125px;
   display: flex;
   justify-content: center;
   align-items: center;
-  ${MAKE_MOBILE(PANEL_LEFT_BREAK_POINT)`
-    width: auto;
-  `};
 `;
 export const MyNavPill = styled(NavLink)`
   &:hover {
@@ -30,12 +27,12 @@ export const MyNavPill = styled(NavLink)`
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  padding: ${props => (props.small ? '0.75rem' : '0.75rem 1rem')};
+  padding: 0.75rem 1rem;
   color: ${props => (props.color ? props.color : __FIFTH)};
   background-color: #fff;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   margin: 0 10px;
-  border-radius: ${props => (props.small ? '50%' : '10px')};
+  border-radius: 10px;
   cursor: pointer;
 
   &.${props => props.activeClassName} {
@@ -54,9 +51,6 @@ MyNavPill.defaultProps = {
 
 const Name = styled.div`
   white-space: nowrap;
-  ${MAKE_MOBILE(PANEL_LEFT_BREAK_POINT)`
-    display: none; 
-  `};
 `;
 
 const NavPill = props => {
@@ -68,10 +62,10 @@ const NavPill = props => {
     >
       <Ink />
       <IconContainer {...props}>
-        {props.small ? null : <Name>{props.name}</Name>}
+        <Name>{props.name}</Name>
         <Icon
           noMove
-          left={props.small ? 0 : 5}
+          left={5}
           icon={props.icon}
           material={props.material}
           width={props.width}
