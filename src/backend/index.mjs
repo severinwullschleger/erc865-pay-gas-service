@@ -17,7 +17,10 @@ const startApplication = async () => {
     dotenv.config();  //import env variables from .env file
   }
 
-  await MongoClient.connect(process.env.MONGODB_URI)
+  await MongoClient.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
     .then(client => {
       db = client.db('heroku_g621jvzr');
       console.log('Connected to database.');
