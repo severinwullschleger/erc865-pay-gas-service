@@ -29,7 +29,7 @@ export const sendTransferAndCallPreSignedTransaction = async (transactionObject)
   )
     .send({
       from: config.unlockedServiceAccount,
-      gas: 80000000
+      gas: 8000000
     })
     .on('transactionHash', async tx => {
       const saveToDbSuccess = await saveTransaction(tx, transactionObject, config.unlockedServiceAccount);
