@@ -29,9 +29,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "cross-env NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/backend",
-    "condepl": "cross-env BC_NETWORK=parity NODE_ENV=development node --experimental-modules src/smartcontracts/deployment/deployment-script.mjs",
-    "dev": "cross-env BC_NETWORK=ganache NODE_ENV=development nodemon --exec \"node --experimental-modules\" src/dev-script.mjs"
+    "server": "cross-env NODE_ENV=development nodemon --exec \"node --experimental-modules --es-module-specifier-resolution=node\" src/backend",
+    "condepl": "cross-env BC_NETWORK=parity NODE_ENV=development node --experimental-modules --es-module-specifier-resolution=node src/smartcontracts/deployment/deployment-script.mjs",
+    "dev": "cross-env BC_NETWORK=ganache NODE_ENV=development nodemon --exec \"node --experimental-modules --es-module-specifier-resolution=node\" src/dev-script.mjs"
   },
   "eslintConfig": {
     "extends": "react-app"
