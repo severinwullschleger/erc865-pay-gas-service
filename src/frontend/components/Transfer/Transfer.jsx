@@ -1,14 +1,14 @@
 import React, {Component} from "react";
 import styled from "styled-components";
-import {InputField} from "./design-components/Inputs.js";
-import Button from "./design-components/Button.js";
+import {InputField} from "../../views/design-components/Inputs.js";
+import Button from "../../views/design-components/Button.js";
 import secp256k1 from "secp256k1";
-import {Web3Context} from '../contexts/Web3Context';
-import {getDomain} from "../../helpers/getDomain.mjs";
+import {Web3Context} from '../../contexts/Web3Context.js';
+import {getDomain} from "../../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
-import {__GRAY_200, __THIRD} from "../helpers/colors.js";
+import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
 import Select from "react-select";
-import {isServiceContractAddress} from "./formHelpers.js";
+import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
 
 const Container = styled.div`
   display: flex;
@@ -99,16 +99,16 @@ class Transfer extends Component {
     this.state = {
       // transfer data
       tokenContracts: [],
-      selectedTokenContract: null,
-      signature: null,
-      from: null,
-      isFromValid: null,
-      to: null,
-      isToValid: null,
-      value: null,
-      isValueValid: null,
-      nonce: null,
-      privateKey: null
+      selectedTokenContract: "",
+      signature: "",
+      from: "",
+      isFromValid: true,
+      to: "",
+      isToValid: true,
+      value: "",
+      isValueValid: true,
+      nonce: 0,
+      privateKey: ""
     }
   }
 

@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import {Redirect, BrowserRouter, Switch, Route} from 'react-router-dom';
 import NavPill from '../views/design-components/NavPill.js';
 import {NavPillRoutes} from './NavPillRoutes.js';
-import Transfer from "../views/Transfer.jsx";
-import TransferAndCall from "../views/TransferAndCall.jsx";
+import Transfer from "../components/Transfer/Transfer.jsx";
+import TransferAndCall from "../components/TransferAndCall/TransferAndCall.jsx";
 
 const Parent = styled.div`
   display: flex;

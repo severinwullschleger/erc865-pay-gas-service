@@ -5,8 +5,8 @@ export const getTransaction = transactionHash => {
   return db.collection('transactions').findOne({"_id": transactionHash});
 };
 
-export const getTransactions = from => {
-  return db.collection('transactions').find({from});
+export const getTransactions = fromAddress => {
+  return db.collection('transactions').find({from: fromAddress});
 };
 
 export const saveTransaction = async (transactionHash, transactionInput, serviceAccountAddress) => {

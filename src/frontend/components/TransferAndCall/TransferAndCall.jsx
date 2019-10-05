@@ -1,14 +1,14 @@
 import React, {Component} from "react";
 import styled from "styled-components";
-import {InputField} from "./design-components/Inputs.js";
-import Button from "./design-components/Button.js";
+import {InputField} from "../../views/design-components/Inputs.js";
+import Button from "../../views/design-components/Button.js";
 import secp256k1 from "secp256k1";
-import {Web3Context} from '../contexts/Web3Context';
-import {getDomain} from "../../helpers/getDomain.mjs";
+import {Web3Context} from '../../contexts/Web3Context.js';
+import {getDomain} from "../../../helpers/getDomain.mjs";
 import {withRouter} from 'react-router-dom';
 import Select from 'react-select';
-import {__GRAY_200, __THIRD} from "../helpers/colors.js";
-import {isServiceContractAddress} from "./formHelpers.js";
+import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
+import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
 
 const Container = styled.div`
   display: flex;
@@ -103,27 +103,27 @@ class TransferAndCall extends Component {
     super();
     this.state = {
       // validators
-      isFromValid: null,
-      isToValid: null,
-      isValueValid: null,
+      isFromValid: true,
+      isToValid: true,
+      isValueValid: true,
 
       tokenContracts: [],
-      selectedTokenContract: null,
+      selectedTokenContract: "",
       serviceContracts: [],
-      selectedServiceContract: null,
+      selectedServiceContract: "",
 
       // transfer data
-      signature: null,
+      signature: "",
       from: "",
       to: "",
       value: 0,
-      nonce: null,
+      nonce: 0,
 
       // call data
       methods: [],
-      selectedMethod: null,
+      selectedMethod: "",
       callParameters: [],
-      callParametersEncoded: null,
+      callParametersEncoded: "",
 
       // sign data
       privateKey: ""
