@@ -20,5 +20,12 @@ router.post(
   })
 );
 
+router.post(
+  '/transferAndCall/gasEstimation',
+  requestHandler(async req => {
+    return gasEstimation(req.body);
+  })
+);
+
 
 export default router;

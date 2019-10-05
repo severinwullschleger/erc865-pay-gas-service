@@ -76,3 +76,29 @@ export const sendTransferAndCallPreSignedTransaction = async (transactionObject)
 
   return promiEvent.eventEmitter;
 };
+
+
+export const feeEstimation = async (transactionObject) => {
+
+  return tokenContracts[transactionObject.tokenContractIndex].contractObj.methods.transferAndCallPreSigned(
+    transactionObject.signature,
+    transactionObject.from,
+    transactionObject.to,
+    transactionObject.value.toString(),
+    tokenContracts[transactionObject.tokenContractIndex].feeTransferAndCall.toString(),
+    transactionObject.nonce.toString(),
+    transactionObject.methodName,
+    transactionObject.callParametersEncoded
+  )
+    .estimateGas({
+      from: config.unlockedServiceAccount,
+      gas: 8000000
+    })
+    .then(function(gasAmount){
+      console.log(gasAmount);
+      return gasAmount * config.avgGasPriceInEth / tokenContracts[transactionObject.tokenContractIndex].defaultTokenToEthPrice
+    })
+    .catch(function(error){
+      return tokenContracts[transactionObject.tokenContractIndex].feeTransferAndCall
+    });
+};
