@@ -1,7 +1,7 @@
 export const transferTokens = async (tokenContract, sender, receiver, amount) => {
   return tokenContract.methods.transferFrom(sender, receiver, amount).send({
     from: sender,
-    gas: 80000000
+    gas: 8000000
   })
 };
 
@@ -9,7 +9,7 @@ export const transferPreSigned = async (tokenContract, transactionSender, signat
   nonce) => {
   return tokenContract.methods.transferPreSigned(signature, receiver, amount, fee, nonce).send({
     from: transactionSender,
-    gas: 80000000
+    gas: 8000000
   })
 };
 

@@ -26,7 +26,7 @@ const run = async () => {
   await tokenContract.methods.transfer(serviceContract.options.address, 500)
     .send({
       from: accounts[1],
-      gas: 80000000
+      gas: 8000000
     })
     .then(() => {
       console.log("500 tokens transferred from account 1 to account 2")
@@ -94,7 +94,7 @@ const run = async () => {
   // )
   //   .send({
   //     from: accounts[0],
-  //     gas: 80000000
+  //     gas: 8000000
   //   })
   //   .then((receipt) => {
   //     console.log("500 tokens transferred from account 1 to account 2\n" +
@@ -113,7 +113,7 @@ const run = async () => {
   )
     .send({
       from: accounts[0],
-      gas: 80000000
+      gas: 8000000
     })
     .then((receipt) => {
       console.log("500 tokens transferred from account 1 to account 2\n" +
