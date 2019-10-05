@@ -22,7 +22,7 @@ const TitleRow = styled(RowCentered)`
 `;
 
 const Title = styled.h1`
-  font-family: "Indie Flower", cursive;
+  font-family: monospace;
   font-size: 38px;
 `;
 
