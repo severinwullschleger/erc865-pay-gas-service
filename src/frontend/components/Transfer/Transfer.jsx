@@ -9,6 +9,7 @@ import {withRouter} from 'react-router-dom';
 import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
 import Select from "react-select";
 import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
+import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
 
 const Container = styled.div`
   display: flex;
@@ -322,9 +323,9 @@ class Transfer extends Component {
           <WideButton
             disabled={!(this.state.isValueValid && this.state.isToValid && this.state.isFromValid)}
             onClick={async () => {
-              console.log(this.state.isToValid)
               await this.signTransactionData();
               this.sendSignedTransaction();
+              upsertFromAddressesLocalStorage(this.state.from);
             }}>
             Send
           </WideButton>
