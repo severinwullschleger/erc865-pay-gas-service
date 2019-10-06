@@ -9,6 +9,7 @@
     "cors": "latest",
     "express": "latest",
     "mongodb": "latest",
+    "query-string": "^6.8.3",
     "react": "latest",
     "react-dom": "latest",
     "react-ink": "latest",
