@@ -64,7 +64,7 @@ const MyTransactionsTable = props => {
             "Method"
           ]}
           data={getData(props)}
-          columnWidth={["16", "12", "8", "22", "22", "10", "10"]}
+          columnWidth={["16", "12", "8", "21", "21", "10", "12"]}
         />
       )}
     </Container>
