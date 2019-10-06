@@ -5,6 +5,7 @@ import NavPill from '../views/design-components/NavPill.js';
 import {NavPillRoutes} from './NavPillRoutes.js';
 import Transfer from "../components/Transfer/Transfer.jsx";
 import TransferAndCall from "../components/TransferAndCall/TransferAndCall.jsx";
+import MyTransactions from "../components/MyTransactions/MyTransactions.js";
 
 const Parent = styled.div`
   display: flex;
@@ -70,6 +71,14 @@ export class Router extends Component {
                   path={`${this.props.base}/transferAndCall`}
                   render={() => (
                     <TransferAndCall base={`${this.props.base}/transferAndCall`}/>
+                  )}
+                />
+
+                <Route
+                  exact
+                  path={`${this.props.base}/transactions`}
+                  render={() => (
+                    <MyTransactions base={`${this.props.base}/transactions`}/>
                   )}
                 />
 
