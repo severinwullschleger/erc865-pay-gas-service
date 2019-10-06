@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { getTransactions } from "./MyTransactionsMethods.js";
-import { Card } from "../../views/Card.js";
 import Modal from "../../views/design-components/Modal.js";
 import MyTransactionsTable from "./MyTransactionsTable.js";
 import GridSpinner from "../../views/spinners/GridSpinner.js";
