@@ -22,7 +22,7 @@ export const sendTransferPreSignedTransaction = async (transactionObject) => {
       gas: 8000000
     })
     .on('transactionHash', async tx => {
-      const saveToDbSuccess = await saveTransaction(tx, transactionObject, config.unlockedServiceAccount);
+      const saveToDbSuccess = await saveTransaction(tx, transactionObject, config.unlockedServiceAccount, 'transfer');
 
       const txObject = {txHash: tx, saveToDbSuccess};
       promiEvent.eventEmitter.emit('transactionHash', txObject);
