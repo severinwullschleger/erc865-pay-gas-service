@@ -1,6 +1,6 @@
 import Network from './Network.js';
 
-export const getAccounts = async web3 => {
+export const getAccounts =  web3 => {
 	if (web3) {
 		return web3.eth
 			.getAccounts()

@@ -10,6 +10,9 @@ import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
 import Select from "react-select";
 import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
 import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
+import Web3Providers from "../../web3/Web3Providers.mjs";
+import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
+import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
 
 const Container = styled.div`
   display: flex;
@@ -113,7 +116,7 @@ class Transfer extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     let tokenContracts = this.context.tokenContracts.map((c, index) => {
       return {
         value: c,
@@ -129,7 +132,7 @@ class Transfer extends Component {
       ,
       value: 400,
       isValueValid: true,
-      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb',
+      from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
       isFromValid: true,
       to: '0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a',
       isToValid: true,
