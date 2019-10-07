@@ -1,0 +1,56 @@
+.__ALERT_SUCCESS {
+  color: white;
+  background: #2dce89;
+}
+
+.__ALERT_INFO {
+  background: #11cdef;
+  color: white;
+}
+
+.__ALERT_PRIMARY {
+  color: white;
+  background: #5e72e4;
+}
+
+.__ALERT_WARNING {
+  color: white;
+  background: #ffbc50;
+}
+
+.__ALERT_DANGER {
+  color: white;
+  background: #fda08b;
+}
+
+.__ALERT_ERROR {
+  color: white;
+  background: #f75176;
+}
+.__BAR {
+  background: white;
+}
+
+.Toastify__toast-container--top-center {
+  left: 50%;
+}
+
+.Toastify__toast-container {
+  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.4;
+  left: 180px;
+}
+
+.Toastify__toast-container > div {
+  color: white;
+  border-radius: 6px;
+  box-shadow: 2px 2px 20px 2px rgba(0, 0, 0, 0.3);
+}
+
+.Toastify__close-button,
+.Toastify__close-button:hover,
+.Toastify__close-button:focus {
+  opacity: 1;
+  color: white;
+}
