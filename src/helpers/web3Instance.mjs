@@ -14,13 +14,20 @@ const getWeb3Instance = () => {
 };
 
 const getFrontendWeb3 = () => {
-  if (window.web3 && window.web3.currentProvider.isMetaMask) {
-    // MetaMask as main provider
+  // Modern dapp browsers...
+  if (window.ethereum) {
+    window.web3 = new Web3(window.ethereum);
+    return window.web3;
+  }
+  // Legacy dapp browsers...
+  else if (window.web3) {
     console.info('MetaMask detected in this browser');
     web3Provider = Web3Providers.META_MASK;
     return new Web3(window.web3.currentProvider);
   }
+  // Non-dapp browsers...
   else {
+    console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     //this service does not need a provider, before: return new Web3('http://localhost:7545');
     web3Provider = Web3Providers.NO_PROVIDER;
     return new Web3();
