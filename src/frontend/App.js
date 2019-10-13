@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import {Router} from "./routers/Router.js";
+import {ToastContainer} from "react-toastify";
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ class App extends Component {
         </TitleRow>
         <Router
           base={""}/>
+        <ToastContainer />
       </Container>
     );
   }
