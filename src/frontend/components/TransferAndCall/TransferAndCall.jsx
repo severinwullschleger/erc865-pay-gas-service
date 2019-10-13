@@ -237,22 +237,6 @@ class TransferAndCall extends Component {
     }
   }
 
-  isServiceContractAddress(e) {
-    //TODO access context and more than one service contract
-
-    if (
-      this.context.serviceContracts[0].contractObj &&
-      this.context.serviceContracts[0].contractObj.options &&
-      this.context.serviceContracts[0].contractObj.options.address &&
-      e.target.value
-    )
-      return (
-        this.context.serviceContracts[0].contractObj.options.address ===
-        e.target.value
-      );
-    return false;
-  }
-
   async signTransactionData() {
     let types = this.state.callParameters.map(e => {
       return e.type;
