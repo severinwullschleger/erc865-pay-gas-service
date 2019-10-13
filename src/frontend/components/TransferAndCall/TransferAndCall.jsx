@@ -162,14 +162,6 @@ class TransferAndCall extends Component {
         index
       };
     });
-    let methods = [];
-    this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
-      if (this.isCallableMethod(e))
-        methods.push({
-          value: e,
-          label: e.name
-        });
-    });
 
     if (!this.props.location.state) {
       this.setState({
@@ -177,10 +169,18 @@ class TransferAndCall extends Component {
         selectedTokenContract: tokenContracts[0],
         serviceContracts,
         // selectedServiceContract: serviceContracts[0],
-        nonce: 0,
-        methods
+        nonce: 0
       });
     } else {
+      let methods = [];
+      this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
+        if (this.isCallableMethod(e))
+          methods.push({
+            value: e,
+            label: e.name
+          });
+      });
+
       this.setState({
         tokenContracts,
         selectedTokenContract:
@@ -367,7 +367,10 @@ class TransferAndCall extends Component {
     this.setState({
       selectedServiceContract,
       to: selectedServiceContract.value.contractObj.options.address,
-      methods
+      methods,
+      selectedMethod: "",
+      callParameters: [],
+      callParametersEncoded: ""
     });
     this.validateAddress(
       "isToValid",
@@ -377,7 +380,10 @@ class TransferAndCall extends Component {
 
   handleToAddressChangeToServiceContract(newContract) {
     let contract = this.state.serviceContracts.find(c => {
-      return c.value.contractObj.options.address.toLowerCase() === newContract.toLowerCase();
+      return (
+        c.value.contractObj.options.address.toLowerCase() ===
+        newContract.toLowerCase()
+      );
     });
     this.handleServiceContractChange(contract);
   }
@@ -459,7 +465,14 @@ class TransferAndCall extends Component {
                   )
                 )
                   this.handleToAddressChangeToServiceContract(e.target.value);
-                else this.setState({ selectedServiceContract: null });
+                else
+                  this.setState({
+                    selectedServiceContract: null,
+                    methods: [],
+                    selectedMethod: "",
+                    callParameters: [],
+                    callParametersEncoded: ""
+                  });
               }}
             />
           </RowCentered>
