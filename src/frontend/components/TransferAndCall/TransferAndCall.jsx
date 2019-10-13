@@ -133,7 +133,8 @@ class TransferAndCall extends Component {
       callParametersEncoded: "",
 
       // sign data
-      privateKey: ""
+      privateKey: "",
+      showPrivateKey: true
     };
   }
 
@@ -168,34 +169,35 @@ class TransferAndCall extends Component {
         tokenContracts,
         selectedTokenContract: tokenContracts[0],
         serviceContracts,
-        // selectedServiceContract: serviceContracts[0],
         nonce: 0
       });
     } else {
-      let methods = [];
-      this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
-        if (this.isCallableMethod(e))
-          methods.push({
-            value: e,
-            label: e.name
-          });
-      });
+      let selectedServiceContract;
+      if (this.props.location.state.to) {
+        selectedServiceContract = serviceContracts.find(item => {
+          return (
+            item.value.contractObj.options.address ===
+            this.props.location.state.to
+          );
+        });
+        this.handleServiceContractChange(selectedServiceContract);
+      }
+
+      if (this.props.location.state.methodName && selectedServiceContract) {
+        let method = selectedServiceContract.value.contractObj._jsonInterface.find(
+          e => {
+            console.log(e);
+            return e.signature === this.props.location.state.methodName;
+          }
+        );
+        this.handleMethodChange({ value: method, label: method.name });
+      }
 
       this.setState({
         tokenContracts,
         selectedTokenContract:
           tokenContracts[this.props.location.state.tokenContractIndex],
         serviceContracts,
-        selectedServiceContract: this.props.location.state.to
-          ? serviceContracts[
-              serviceContracts.findIndex(item => {
-                return (
-                  item.value.contractObj.options.address ===
-                  this.props.location.state.to
-                );
-              })
-            ]
-          : null,
         nonce: 0,
         value: this.props.location.state.value
           ? this.props.location.state.value
@@ -213,14 +215,14 @@ class TransferAndCall extends Component {
         isFromValid: this.props.location.state.isFromValid
           ? this.props.location.state.isFromValid
           : true,
-        to: this.props.location.state.to ? this.props.location.state.to : "",
+        // to: this.props.location.state.to ? this.props.location.state.to : "",
         isToValid: this.props.location.state.isToValid
           ? this.props.location.state.isToValid
           : true,
         privateKey: this.props.location.state.privateKey
           ? this.props.location.state.privateKey
           : "",
-        methods
+        showPrivateKey: false
       });
     }
   }
@@ -623,15 +625,19 @@ class TransferAndCall extends Component {
             </AmountContainer>
           </Row>
           <RowMultiLines>
-            <PKInputField
-              placeholder={"Private key of the from address"}
-              value={this.state.privateKey}
-              onChange={e => this.handleInput("privateKey", e)}
-            />
-            <PrivateKeyInfo>
-              Your private key is only used to sign the entered transation data.
-              It is neither stored nor send somewhere.
-            </PrivateKeyInfo>
+            {this.state.showPrivateKey ? (
+              <>
+                <PKInputField
+                  placeholder={"Private key of the from address"}
+                  value={this.state.privateKey}
+                  onChange={e => this.handleInput("privateKey", e)}
+                />
+                <PrivateKeyInfo>
+                  Your private key is only used to sign the entered transation
+                  data. It is neither stored nor send somewhere.
+                </PrivateKeyInfo>
+              </>
+            ) : null}
           </RowMultiLines>
           <WideButton
             disabled={
