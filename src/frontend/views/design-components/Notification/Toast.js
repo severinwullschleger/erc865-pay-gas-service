@@ -1,6 +1,6 @@
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../Notification.css';
+import './Notification.css';
 import {css} from 'glamor';
 import {
   __ALERT_ERROR,
