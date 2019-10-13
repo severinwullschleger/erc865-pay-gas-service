@@ -98,6 +98,41 @@ const CustomSelect = styled(Select)`
   box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
 `;
 
+export const polling = async txHash => {
+  await timeout(2000);
+  let tx = await getTransaction(txHash)
+    .then(response => response.json())
+    .then(response => {
+      if (response.success) {
+        return response.data;
+      }
+    });
+
+  switch (tx.status) {
+    case TRANSACTION_STATUS.PENDING:
+      polling(txHash);
+      break;
+    case TRANSACTION_STATUS.CONFIRMED:
+      toast.success("Your transactions has been successfully mined.");
+      break;
+    case TRANSACTION_STATUS.REVERTED:
+      toast.error(
+        "Your transactions has been mined but the action was not successful."
+      );
+      break;
+    case TRANSACTION_STATUS.ERROR:
+      toast.error("Something went wrong with your transaction.");
+      break;
+    case TRANSACTION_STATUS.OUT_OF_GAS:
+      toast.error(
+        "Your transaction could not be mined because it ran out of gas."
+      );
+      break;
+    default:
+      toast.info("Your transaction is not pending anymore.");
+  }
+};
+
 class Transfer extends Component {
   constructor() {
     super();
@@ -230,9 +265,16 @@ class Transfer extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        console.log(response);
+        console.log("response", response);
         if (response.success) {
-          toast.info("The service successfully sent the transaction to the blockchain.");
+          const tx = response.data.txHash;
+          toast.info(
+            "The service successfully sent the transaction to the blockchain. TxHash: " +
+              tx.substring(0, 6) +
+              "..." +
+              tx.substring(tx.length - 4)
+          );
+          polling(tx);
         }
       })
       .catch(err => {
