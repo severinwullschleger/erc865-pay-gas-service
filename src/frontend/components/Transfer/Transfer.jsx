@@ -1,19 +1,22 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
-import {InputField} from "../../views/design-components/Inputs.js";
+import { InputField } from "../../views/design-components/Inputs.js";
 import Button from "../../views/design-components/Button.js";
 import secp256k1 from "secp256k1";
-import {Web3Context} from '../../contexts/Web3Context.js';
-import {getDomain} from "../../../helpers/getDomain.mjs";
-import {withRouter} from 'react-router-dom';
-import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
+import { Web3Context } from "../../contexts/Web3Context.js";
+import { getDomain } from "../../../helpers/getDomain.mjs";
+import { withRouter } from "react-router-dom";
+import { __GRAY_200, __THIRD } from "../../helpers/colors.js";
 import Select from "react-select";
-import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
-import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
-import toast from '../../views/design-components/Notification/Toast.js';
+import { isServiceContractAddress } from "../../helpers/isServiceContractAddress.js";
+import { upsertFromAddressesLocalStorage } from "../../helpers/saveUserAddressInLocalStorage.js";
 import Web3Providers from "../../web3/Web3Providers.mjs";
-import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
+import web3, { web3Provider } from "../../../helpers/web3Instance.mjs";
 import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
+import toast from "../../views/design-components/Notification/Toast.js";
+import { getTransaction } from "../MyTransactions/MyTransactionsMethods.js";
+import { timeout } from "../../../helpers/timeout.mjs";
+import { TRANSACTION_STATUS } from "../../../backend/db/transaction-states.mjs";
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +37,7 @@ const Row = styled.div`
 `;
 
 const RowCentered = styled(Row)`
-  align-items: center;    //vertical  alignment
+  align-items: center; //vertical  alignment
 `;
 
 const LeftComponent = styled.div`
@@ -65,8 +68,7 @@ const Padded = styled.div`
   padding-left: 8px;
 `;
 
-const PKInputField = styled(InputField)`
-`;
+const PKInputField = styled(InputField)``;
 
 const PrivateKeyInfo = styled.div`
   font-style: italic;
@@ -84,7 +86,10 @@ const RowMultiLines = styled.div`
 
 const WideButton = styled(Button)`
   margin-top: 35px;
-  ${props => !props.disabled ? '' : `
+  ${props =>
+    !props.disabled
+      ? ""
+      : `
     opacity: 0.4
   `}
 `;
@@ -149,7 +154,7 @@ class Transfer extends Component {
       isValueValid: true,
       nonce: 0,
       privateKey: ""
-    }
+    };
   }
 
   async componentDidMount() {
@@ -163,22 +168,22 @@ class Transfer extends Component {
     this.setState({
       tokenContracts,
       selectedTokenContract: tokenContracts[0],
-      nonce: 0
+      nonce: 0,
       // testing purposes
-      ,
       value: 400,
       isValueValid: true,
       // from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
-      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb', // deactivate MetaMask again
+      from: "0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb", // deactivate MetaMask again
       isFromValid: true,
-      to: '0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a',
+      to: "0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a",
       isToValid: true,
-      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F' // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
-    })
+      privateKey:
+        "95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F" // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
+    });
   }
 
   handleInput(stateKey, e) {
-    this.setState({[stateKey]: e.target.value})
+    this.setState({ [stateKey]: e.target.value });
   }
 
   handleTokenContractChange(selectedTokenContract) {
@@ -189,9 +194,9 @@ class Transfer extends Component {
 
   validateAddress(stateKey, e) {
     if (this.context.web3.utils.isAddress(e.target.value)) {
-      this.setState({[stateKey]: true});
+      this.setState({ [stateKey]: true });
     } else {
-      this.setState({[stateKey]: false});
+      this.setState({ [stateKey]: false });
     }
   }
 
@@ -201,21 +206,23 @@ class Transfer extends Component {
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
     //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
     let input = this.context.web3.eth.abi.encodeParameters(
-      ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256'],
-      ['0x15420b71',
+      ["bytes4", "address", "address", "uint256", "uint256", "uint256"],
+      [
+        "0x15420b71",
         this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
         this.state.selectedTokenContract.value.feeTransfer.toString(),
-        nonce.toString()]);
+        nonce.toString()
+      ]
+    );
     console.log(input);
 
     let inputHash = this.context.web3.utils.keccak256(input);
     let privateKey;
     if (this.state.privateKey.substring(0, 2) === "0x")
       privateKey = this.state.privateKey.substring(2);
-    else
-      privateKey = this.state.privateKey;
+    else privateKey = this.state.privateKey;
 
     let signObj;
     if (this.state.selectedTokenContract.value.signMethod === "personalSign") {
@@ -224,8 +231,7 @@ class Transfer extends Component {
         // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
         this.state.from
       );
-    }
-    else {
+    } else {
       signObj = secp256k1.sign(
         Buffer.from(inputHash.substring(2), "hex"),
         // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
@@ -234,7 +240,10 @@ class Transfer extends Component {
     }
     console.log(signObj);
 
-    let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
+    let signatureInHex =
+      "0x" +
+      signObj.signature.toString("hex") +
+      (signObj.recovery + 27).toString(16);
 
     this.setState({
       signature: signatureInHex,
@@ -243,7 +252,6 @@ class Transfer extends Component {
   }
 
   sendSignedTransaction() {
-
     let transactionObject = {
       tokenContractIndex: this.state.selectedTokenContract.index,
       signature: this.state.signature,
@@ -257,9 +265,9 @@ class Transfer extends Component {
     console.log("sending this object: ", transactionObject);
 
     fetch(`${getDomain()}/api/transfer`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(transactionObject)
     })
@@ -278,7 +286,7 @@ class Transfer extends Component {
         }
       })
       .catch(err => {
-        console.log("something went wrong: ", err)
+        console.log("something went wrong: ", err);
       });
   }
 
@@ -291,7 +299,7 @@ class Transfer extends Component {
               <AmountInput
                 placeholder={"Amount"}
                 value={this.state.value}
-                onChange={e => this.handleInput('value', e)}
+                onChange={e => this.handleInput("value", e)}
               />
             </LeftComponent>
             <CustomSelect
@@ -309,62 +317,77 @@ class Transfer extends Component {
               options={this.state.tokenContracts}
               styles={{
                 control: styles => ({
-                  ...styles, backgroundColor: 'white',
+                  ...styles,
+                  backgroundColor: "white",
                   borderRadius: "0.25rem",
                   transition: "box-shadow 0.15s ease",
-                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  boxShadow:
+                    "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
                   color: __THIRD,
                   borderColor: __GRAY_200,
                   border: "1px solid " + __GRAY_200
                 }),
-                input: styles => ({...styles, fontColor: __THIRD}),
-                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+                input: styles => ({ ...styles, fontColor: __THIRD }),
+                singleValue: (styles, { data }) => ({
+                  ...styles,
+                  color: __THIRD
+                })
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent>
-              From:
-            </LeftComponent>
+            <LeftComponent>From:</LeftComponent>
             <AddressInputField
               placeholder={"From Address"}
               value={this.state.from}
               onChange={e => {
-                this.handleInput('from', e);
-                this.validateAddress('isFromValid', e);
+                this.handleInput("from", e);
+                this.validateAddress("isFromValid", e);
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent>
-              To:
-            </LeftComponent>
+            <LeftComponent>To:</LeftComponent>
             <AddressInputField
               placeholder={"To Address"}
               value={this.state.to}
               onChange={e => {
-                this.handleInput('to', e);
-                this.validateAddress('isToValid', e);
-                if (isServiceContractAddress(this.context.serviceContracts, e.target.value))
+                this.handleInput("to", e);
+                this.validateAddress("isToValid", e);
+                if (
+                  isServiceContractAddress(
+                    this.context.serviceContracts,
+                    e.target.value
+                  )
+                )
                   this.props.history.push(`/transferAndCall`);
               }}
             />
           </RowCentered>
           <Row>
-            <LeftComponent>
-              Transaction costs:
-            </LeftComponent>
+            <LeftComponent>Transaction costs:</LeftComponent>
             <AmountContainer>
               <div>
                 <Fee>
-                  {this.state.selectedTokenContract && this.state.selectedTokenContract.value.feeTransfer }
-                </Fee> {this.state.selectedTokenContract && this.state.selectedTokenContract.value.symbol }
+                  {this.state.selectedTokenContract &&
+                    this.state.selectedTokenContract.value.feeTransfer}
+                </Fee>{" "}
+                {this.state.selectedTokenContract &&
+                  this.state.selectedTokenContract.value.symbol}
               </div>
               <Padded>
-                {'≈'}<Fee>{this.state.selectedTokenContract && (this.state.selectedTokenContract.value.feeTransfer * this.state.selectedTokenContract.value.defaultTokenToEthPrice)}</Fee> ETH
+                {"≈"}
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    this.state.selectedTokenContract.value.feeTransfer *
+                      this.state.selectedTokenContract.value
+                        .defaultTokenToEthPrice}
+                </Fee>{" "}
+                ETH
               </Padded>
               <Padded>
-                {'≈'}<Fee>0.20</Fee> USD
+                {"≈"}
+                <Fee>0.20</Fee> USD
               </Padded>
             </AmountContainer>
           </Row>
@@ -372,20 +395,27 @@ class Transfer extends Component {
             <PKInputField
               placeholder={"Private key of the from address"}
               value={this.state.privateKey}
-              onChange={e => this.handleInput('privateKey', e)}
+              onChange={e => this.handleInput("privateKey", e)}
             />
             <PrivateKeyInfo>
-              Your private key is only used to sign the entered transation data. It is neither stored nor send
-              somewhere.
+              Your private key is only used to sign the entered transation data.
+              It is neither stored nor send somewhere.
             </PrivateKeyInfo>
           </RowMultiLines>
           <WideButton
-            disabled={!(this.state.isValueValid && this.state.isToValid && this.state.isFromValid)}
+            disabled={
+              !(
+                this.state.isValueValid &&
+                this.state.isToValid &&
+                this.state.isFromValid
+              )
+            }
             onClick={async () => {
               await this.signTransactionData();
               this.sendSignedTransaction();
               upsertFromAddressesLocalStorage(this.state.from);
-            }}>
+            }}
+          >
             Send
           </WideButton>
         </FormContainer>
