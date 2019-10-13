@@ -5835,6 +5835,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jsqr@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jsqr/-/jsqr-1.2.0.tgz#f93fc65fa7d1ded78b1bcb020fa044352b04261a"
+
 jsx-ast-utils@^2.1.0, jsx-ast-utils@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-2.2.1.tgz#4d4973ebf8b9d2837ee91a8208cc66f3a2776cfb"
@@ -8054,6 +8058,14 @@ react-portal-tooltip@latest:
   version "2.4.7"
   resolved "https://registry.yarnpkg.com/react-portal-tooltip/-/react-portal-tooltip-2.4.7.tgz#77fd4a75760afecd116736c480485aa22cbbb740"
 
+react-qr-reader@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-qr-reader/-/react-qr-reader-2.2.1.tgz#dc89046d1c1a1da837a683dd970de5926817d55b"
+  dependencies:
+    jsqr "^1.2.0"
+    prop-types "^15.7.2"
+    webrtc-adapter "^7.2.1"
+
 react-responsive-carousel@latest:
   version "3.1.50"
   resolved "https://registry.yarnpkg.com/react-responsive-carousel/-/react-responsive-carousel-3.1.50.tgz#e5255f7760f3b4766efa5cd04361c74df4311960"
@@ -8539,6 +8551,12 @@ rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"
 
+rtcpeerconnection-shim@^1.2.15:
+  version "1.2.15"
+  resolved "https://registry.yarnpkg.com/rtcpeerconnection-shim/-/rtcpeerconnection-shim-1.2.15.tgz#e7cc189a81b435324c4949aa3dfb51888684b243"
+  dependencies:
+    sdp "^2.6.0"
+
 run-async@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
@@ -8638,6 +8656,10 @@ scrypt-js@2.0.3:
 scryptsy@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
+
+sdp@^2.10.0, sdp@^2.6.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/sdp/-/sdp-2.10.0.tgz#643fff1a43cdba54a739c7b202f56bd854474af2"
 
 secp256k1@latest:
   version "3.7.1"
@@ -10217,6 +10239,13 @@ webpack@4.41.0:
     terser-webpack-plugin "^1.4.1"
     watchpack "^1.6.0"
     webpack-sources "^1.4.1"
+
+webrtc-adapter@^7.2.1:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-7.3.0.tgz#a65e18aad42759bab6ced7f8cfff11b051321e2a"
+  dependencies:
+    rtcpeerconnection-shim "^1.2.15"
+    sdp "^2.10.0"
 
 websocket-driver@>=0.5.1:
   version "0.7.3"
