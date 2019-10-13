@@ -13,6 +13,7 @@ import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLo
 import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
 import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
 import Web3Providers from "../../web3/Web3Providers.mjs";
+import {callService} from "../Transfer/Transfer.jsx";
 
 const Container = styled.div`
   display: flex;
@@ -299,23 +300,8 @@ class TransferAndCall extends Component {
       methodName: this.state.selectedMethod.value.signature,
       callParametersEncoded: this.state.callParametersEncoded
     };
-
     console.log("sending this object: ", transactionObject);
-
-    fetch(`${getDomain()}/api/transferAndCall`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(transactionObject)
-    })
-      .then(response => response.json())
-      .then(response => {
-        console.log(response);
-      })
-      .catch(err => {
-        console.log("something went wrong: ", err)
-      });
+    callService("transferAndCall", transactionObject);
   }
 
   handleMethodChange(selectedMethod) {

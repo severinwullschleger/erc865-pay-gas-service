@@ -138,6 +138,41 @@ export const polling = async txHash => {
   }
 };
 
+export const callService = (method, transactionObject) => {
+  fetch(`${getDomain()}/api/${method}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(transactionObject)
+  })
+    .then(response => response.json())
+    .then(response => {
+      console.log("response", response);
+      if (response.success) {
+        const tx = response.data.txHash;
+        toast.info(
+          "The service successfully sent the transaction to the blockchain. TxHash: " +
+          tx.substring(0, 6) +
+          "..." +
+          tx.substring(tx.length - 4)
+        );
+        polling(tx);
+      }
+      else {
+        toast.error(
+          "Something went wrong. The service was not able to send your transaction to the blockchain."
+        );
+      }
+    })
+    .catch(err => {
+      console.log("something went wrong: ", err);
+      toast.error(
+        "Something went wrong. The service was not able to send your transaction to the blockchain."
+      );
+    });
+};
+
 class Transfer extends Component {
   constructor() {
     super();
@@ -261,33 +296,8 @@ class Transfer extends Component {
       fee: this.state.selectedTokenContract.value.feeTransfer,
       nonce: this.state.nonce
     };
-
     console.log("sending this object: ", transactionObject);
-
-    fetch(`${getDomain()}/api/transfer`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(transactionObject)
-    })
-      .then(response => response.json())
-      .then(response => {
-        console.log("response", response);
-        if (response.success) {
-          const tx = response.data.txHash;
-          toast.info(
-            "The service successfully sent the transaction to the blockchain. TxHash: " +
-              tx.substring(0, 6) +
-              "..." +
-              tx.substring(tx.length - 4)
-          );
-          polling(tx);
-        }
-      })
-      .catch(err => {
-        console.log("something went wrong: ", err);
-      });
+    callService("transfer", transactionObject);
   }
 
   render() {
