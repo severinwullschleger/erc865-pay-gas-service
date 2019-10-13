@@ -2,8 +2,9 @@
 #### Starting parity dev chain
 Unlocking more than one address:
 ```
-sudo parity --config dev --unlock "0x00a329c0648769a73afac7f9381e08fb43dbea72","0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a","0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb","0x8C5D1Ad4BdA1AF6b93E027859c7424C65251F838","0xD420bd920789B19539316d1144B63539CD059152" --password ./empty.txt --jsonrpc-hosts any --jsonrpc-apis eth,net,private,parity,personal --ws-apis eth,net,private,parity,personal --jsonrpc-cors https://remix.ethereum.org
+sudo parity --config dev --geth --unlock "0x00a329c0648769a73afac7f9381e08fb43dbea72" --password ./empty.txt --jsonrpc-hosts any --jsonrpc-apis eth,net,private,parity,personal --ws-apis eth,net,private,parity,personal --jsonrpc-cors https://remix.ethereum.org
 ```
+,"0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a","0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb","0x8C5D1Ad4BdA1AF6b93E027859c7424C65251F838","0xD420bd920789B19539316d1144B63539CD059152"
 
 Enable unlocking with --geth flag
 ```

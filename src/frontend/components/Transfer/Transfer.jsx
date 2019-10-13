@@ -10,6 +10,7 @@ import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
 import Select from "react-select";
 import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
 import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
+import toast from '../../views/design-components/Notification/Toast.js';
 import Web3Providers from "../../web3/Web3Providers.mjs";
 import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
 import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
@@ -132,11 +133,12 @@ class Transfer extends Component {
       ,
       value: 400,
       isValueValid: true,
-      from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
+      // from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
+      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb', // deactivate MetaMask again
       isFromValid: true,
       to: '0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a',
       isToValid: true,
-      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F'
+      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F' // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
     })
   }
 
@@ -158,7 +160,7 @@ class Transfer extends Component {
     }
   }
 
-  signTransactionData() {
+  async signTransactionData() {
     let nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
@@ -180,12 +182,21 @@ class Transfer extends Component {
     else
       privateKey = this.state.privateKey;
 
-
-    const signObj = secp256k1.sign(
-      Buffer.from(inputHash.substring(2), "hex"),
-      // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
-      Buffer.from(privateKey, "hex")
-    );
+    let signObj;
+    if (this.state.selectedTokenContract.value.signMethod === "personalSign") {
+      signObj = await web3.eth.personal.sign(
+        inputHash.substring(2),
+        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
+        this.state.from
+      );
+    }
+    else {
+      signObj = secp256k1.sign(
+        Buffer.from(inputHash.substring(2), "hex"),
+        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
+        Buffer.from(privateKey, "hex")
+      );
+    }
     console.log(signObj);
 
     let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
@@ -220,6 +231,9 @@ class Transfer extends Component {
       .then(response => response.json())
       .then(response => {
         console.log(response);
+        if (response.success) {
+          toast.info("The service successfully sent the transaction to the blockchain.");
+        }
       })
       .catch(err => {
         console.log("something went wrong: ", err)

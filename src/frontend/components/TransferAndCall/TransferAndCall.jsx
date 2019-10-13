@@ -10,6 +10,9 @@ import Select from 'react-select';
 import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
 import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
 import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
+import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
+import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
+import Web3Providers from "../../web3/Web3Providers.mjs";
 
 const Container = styled.div`
   display: flex;
@@ -139,7 +142,7 @@ class TransferAndCall extends Component {
       && e.inputs[1].type === 'uint256'
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     let methods = [];
     this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
       if (this.isCallableMethod(e))
@@ -172,11 +175,12 @@ class TransferAndCall extends Component {
       ,
       value: 400,
       isValueValid: true,
-      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb',
+      // from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
+      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb', // deactivate MetaMask again
       isFromValid: true,
       to: this.context.serviceContracts[0].contractObj.options.address,
       isToValid: true,
-      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F',
+      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F',   // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
       methods,
       selectedMethod: methods[0],
       callParameters: methods[0].value.inputs
@@ -203,7 +207,7 @@ class TransferAndCall extends Component {
     return false;
   }
 
-  signTransactionData() {
+  async signTransactionData() {
 
     let types = this.state.callParameters.map(e => {
         return e.type
@@ -257,11 +261,21 @@ class TransferAndCall extends Component {
       privateKey = this.state.privateKey;
 
 
-    const signObj = secp256k1.sign(
-      Buffer.from(inputHash.substring(2), "hex"),
-      // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
-      Buffer.from(privateKey, "hex")
-    );
+    let signObj;
+    if (this.state.selectedTokenContract.value.signMethod === "personalSign") {
+      signObj = await web3.eth.personal.sign(
+        inputHash.substring(2),
+        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
+        this.state.from
+      );
+    }
+    else {
+      signObj = secp256k1.sign(
+        Buffer.from(inputHash.substring(2), "hex"),
+        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
+        Buffer.from(privateKey, "hex")
+      );
+    }
     console.log(signObj);
 
     let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
