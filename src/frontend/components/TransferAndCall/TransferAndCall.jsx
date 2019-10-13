@@ -371,9 +371,19 @@ class TransferAndCall extends Component {
   }
 
   handleServiceContractChange(selectedServiceContract) {
+    let methods = [];
+    selectedServiceContract.value.contractObj._jsonInterface.forEach(e => {
+      if (this.isCallableMethod(e))
+        methods.push({
+          value: e,
+          label: e.name
+        });
+    });
+
     this.setState({
       selectedServiceContract,
-      to: selectedServiceContract.value.contractObj.options.address
+      to: selectedServiceContract.value.contractObj.options.address,
+      methods
     });
     this.validateAddress(
       "isToValid",
@@ -381,14 +391,11 @@ class TransferAndCall extends Component {
     );
   }
 
-  changeServiceContractTo(value) {
-    this.state.serviceContracts.forEach(c => {
-      if (
-        c.value.contractObj.options.address.toLowerCase() ===
-        value.toLowerCase()
-      )
-        this.handleServiceContractChange(c);
+  handleToAddressChangeToServiceContract(newContract) {
+    let contract = this.state.serviceContracts.find(c => {
+      return c.value.contractObj.options.address.toLowerCase() === newContract.toLowerCase();
     });
+    this.handleServiceContractChange(contract);
   }
 
   handleParameterInput(index, e) {
@@ -467,7 +474,7 @@ class TransferAndCall extends Component {
                     e.target.value
                   )
                 )
-                  this.changeServiceContractTo(e.target.value);
+                  this.handleToAddressChangeToServiceContract(e.target.value);
                 else this.setState({ selectedServiceContract: null });
               }}
             />
