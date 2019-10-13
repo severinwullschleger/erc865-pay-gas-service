@@ -19,6 +19,9 @@ import { timeout } from "../../../helpers/timeout.mjs";
 import { TRANSACTION_STATUS } from "../../../backend/db/transaction-states.mjs";
 import config from "../../../config.json";
 
+import { QRCodeSection } from "./QRCodeSection.jsx";
+import Icon from "../../views/icons/Icon.js";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -101,6 +104,14 @@ const WideButton = styled(Button)`
       : `
     opacity: 0.4
   `}
+`;
+
+const QRCodeButton = styled(Button)`
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const CustomSelect = styled(Select)`
@@ -196,7 +207,8 @@ class Transfer extends Component {
       value: "",
       isValueValid: true,
       nonce: 0,
-      privateKey: ""
+      privateKey: "",
+      qrCodeSection: false
     };
   }
 
@@ -312,6 +324,24 @@ class Transfer extends Component {
     return (
       <Container>
         <FormContainer>
+          <QRCodeButton
+            onClick={() => {
+              this.setState({ qrCodeSection: true });
+            }}
+          >
+            <Icon icon={"qr-scanner"} height={35} color={"white"} right={13} />
+            Scan QR Code instead of filling the form
+          </QRCodeButton>
+          {this.state.qrCodeSection ? (
+            <QRCodeSection
+              handleScan={data => {
+                this.handleQRCodeScan(data);
+              }}
+              handleError={error => {
+                console.error("did not work", error);
+              }}
+            />
+          ) : null}
           <RowCentered>
             <LeftComponent>
               <AmountInput
