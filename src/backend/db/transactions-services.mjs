@@ -10,6 +10,7 @@ export const getTransactions = fromAddresses => {
     return db
       .collection("transactions")
       .find({ from: { $in: fromAddresses } })
+      .sort({ created: 1 })
       .toArray();
   } else
     return db
