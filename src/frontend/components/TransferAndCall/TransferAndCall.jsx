@@ -1,19 +1,19 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
-import {InputField} from "../../views/design-components/Inputs.js";
+import { InputField } from "../../views/design-components/Inputs.js";
 import Button from "../../views/design-components/Button.js";
 import secp256k1 from "secp256k1";
-import {Web3Context} from '../../contexts/Web3Context.js';
-import {getDomain} from "../../../helpers/getDomain.mjs";
-import {withRouter} from 'react-router-dom';
-import Select from 'react-select';
-import {__GRAY_200, __THIRD} from "../../helpers/colors.js";
-import {isServiceContractAddress} from "../../helpers/isServiceContractAddress.js";
-import {upsertFromAddressesLocalStorage} from "../../helpers/saveUserAddressInLocalStorage.js";
+import { Web3Context } from "../../contexts/Web3Context.js";
+import { getDomain } from "../../../helpers/getDomain.mjs";
+import { withRouter } from "react-router-dom";
+import Select from "react-select";
+import { __GRAY_200, __THIRD } from "../../helpers/colors.js";
+import { isServiceContractAddress } from "../../helpers/isServiceContractAddress.js";
+import { upsertFromAddressesLocalStorage } from "../../helpers/saveUserAddressInLocalStorage.js";
 import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
-import web3, {web3Provider} from "../../../helpers/web3Instance.mjs";
+import web3, { web3Provider } from "../../../helpers/web3Instance.mjs";
 import Web3Providers from "../../web3/Web3Providers.mjs";
-import {callService} from "../Transfer/Transfer.jsx";
+import { callService } from "../Transfer/Transfer.jsx";
 
 const Container = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ const TitleRow = styled(Row)`
 `;
 
 const RowCentered = styled(Row)`
-  align-items: center;    //vertical  alignment
+  align-items: center; //vertical  alignment
 `;
 
 const LeftComponent = styled.div`
@@ -70,8 +70,7 @@ const Padded = styled.div`
   padding-left: 8px;
 `;
 
-const PKInputField = styled(InputField)`
-`;
+const PKInputField = styled(InputField)``;
 
 const PrivateKeyInfo = styled.div`
   font-style: italic;
@@ -89,7 +88,10 @@ const RowMultiLines = styled.div`
 
 const WideButton = styled(Button)`
   margin-top: 35px;
-  ${props => !props.disabled ? '' : `
+  ${props =>
+    !props.disabled
+      ? ""
+      : `
     opacity: 0.4
   `}
 `;
@@ -132,26 +134,20 @@ class TransferAndCall extends Component {
 
       // sign data
       privateKey: ""
-    }
+    };
   }
 
   isCallableMethod(e) {
-    return e.type === "function"
-      && e.constant === false
-      && e.inputs.length >= 2
-      && e.inputs[0].type === 'address'
-      && e.inputs[1].type === 'uint256'
-  };
+    return (
+      e.type === "function" &&
+      e.constant === false &&
+      e.inputs.length >= 2 &&
+      e.inputs[0].type === "address" &&
+      e.inputs[1].type === "uint256"
+    );
+  }
 
   async componentDidMount() {
-    let methods = [];
-    this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
-      if (this.isCallableMethod(e))
-        methods.push({
-          value: e,
-          label: e.name
-        });
-    });
     let tokenContracts = this.context.tokenContracts.map((c, index) => {
       return {
         value: c,
@@ -166,53 +162,101 @@ class TransferAndCall extends Component {
         index
       };
     });
-    this.setState({
-      tokenContracts,
-      selectedTokenContract: tokenContracts[0],
-      serviceContracts,
-      // selectedServiceContract: serviceContracts[0],
-      nonce: 0
-      // testing purposes
-      ,
-      value: 400,
-      isValueValid: true,
-      // from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
-      from: '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb', // deactivate MetaMask again
-      isFromValid: true,
-      to: this.context.serviceContracts[0].contractObj.options.address,
-      isToValid: true,
-      privateKey: '95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F',   // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
-      methods,
-      selectedMethod: methods[0],
-      callParameters: methods[0].value.inputs
-    })
+    let methods = [];
+    this.context.serviceContracts[0].contractObj._jsonInterface.forEach(e => {
+      if (this.isCallableMethod(e))
+        methods.push({
+          value: e,
+          label: e.name
+        });
+    });
+
+    if (!this.props.location.state) {
+      this.setState({
+        tokenContracts,
+        selectedTokenContract: tokenContracts[0],
+        serviceContracts,
+        // selectedServiceContract: serviceContracts[0],
+        nonce: 0,
+        methods
+      });
+    } else {
+      this.setState({
+        tokenContracts,
+        selectedTokenContract:
+          tokenContracts[this.props.location.state.tokenContractIndex],
+        serviceContracts,
+        selectedServiceContract: this.props.location.state.to
+          ? serviceContracts[
+              serviceContracts.findIndex(item => {
+                return (
+                  item.value.contractObj.options.address ===
+                  this.props.location.state.to
+                );
+              })
+            ]
+          : null,
+        nonce: 0,
+        value: this.props.location.state.value
+          ? this.props.location.state.value
+          : 0,
+        isValueValid: this.props.location.state.isValueValid
+          ? this.props.location.state.isValueValid
+          : true,
+        from: this.props.location.state.from
+          ? this.props.location.state.from
+          : web3Provider === Web3Providers.NO_PROVIDER
+          ? ""
+          : await getEthereumAccounts(web3).then(accounts => {
+              return accounts[0];
+            }),
+        isFromValid: this.props.location.state.isFromValid
+          ? this.props.location.state.isFromValid
+          : true,
+        to: this.props.location.state.to ? this.props.location.state.to : "",
+        isToValid: this.props.location.state.isToValid
+          ? this.props.location.state.isToValid
+          : true,
+        privateKey: this.props.location.state.privateKey
+          ? this.props.location.state.privateKey
+          : "",
+        methods
+      });
+    }
   }
 
   handleInput(stateKey, e) {
-    this.setState({[stateKey]: e.target.value})
+    this.setState({ [stateKey]: e.target.value });
   }
 
   validateAddress(stateKey, address) {
     if (this.context.web3.utils.isAddress(address)) {
-      this.setState({[stateKey]: true});
+      this.setState({ [stateKey]: true });
     } else {
-      this.setState({[stateKey]: false});
+      this.setState({ [stateKey]: false });
     }
   }
 
   isServiceContractAddress(e) {
     //TODO access context and more than one service contract
 
-    if (this.context.serviceContracts[0].contractObj && this.context.serviceContracts[0].contractObj.options && this.context.serviceContracts[0].contractObj.options.address && e.target.value)
-      return this.context.serviceContracts[0].contractObj.options.address === e.target.value;
+    if (
+      this.context.serviceContracts[0].contractObj &&
+      this.context.serviceContracts[0].contractObj.options &&
+      this.context.serviceContracts[0].contractObj.options.address &&
+      e.target.value
+    )
+      return (
+        this.context.serviceContracts[0].contractObj.options.address ===
+        e.target.value
+      );
     return false;
   }
 
   async signTransactionData() {
-
     let types = this.state.callParameters.map(e => {
-        return e.type
-      });
+      return e.type;
+    });
     // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
     types.shift();
     types.shift();
@@ -222,7 +266,7 @@ class TransferAndCall extends Component {
         if (!this.context.web3.utils.isHexStrict(e.value))
           return this.context.web3.utils.utf8ToHex(e.value);
       }
-      return e.value
+      return e.value;
     });
     // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
     values.shift();
@@ -232,16 +276,25 @@ class TransferAndCall extends Component {
       types,
       values
     );
-    this.setState({callParametersEncoded});
+    this.setState({ callParametersEncoded });
 
     let nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
     //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
     let input = this.context.web3.eth.abi.encodeParameters(
-      ['bytes4', 'address', 'address', 'uint256', 'uint256', 'uint256', "bytes4", "bytes"],
       [
-        '0x38980f82',
+        "bytes4",
+        "address",
+        "address",
+        "uint256",
+        "uint256",
+        "uint256",
+        "bytes4",
+        "bytes"
+      ],
+      [
+        "0x38980f82",
         this.state.selectedTokenContract.value.contractObj.options.address,
         this.state.to,
         this.state.value.toString(),
@@ -251,16 +304,15 @@ class TransferAndCall extends Component {
         // call parameters
         this.state.selectedMethod.value.signature,
         callParametersEncoded
-      ]);
-    console.log('input: ' + input);
+      ]
+    );
+    console.log("input: " + input);
 
     let inputHash = this.context.web3.utils.keccak256(input);
     let privateKey;
     if (this.state.privateKey.substring(0, 2) === "0x")
       privateKey = this.state.privateKey.substring(2);
-    else
-      privateKey = this.state.privateKey;
-
+    else privateKey = this.state.privateKey;
 
     let signObj;
     if (this.state.selectedTokenContract.value.signMethod === "personalSign") {
@@ -269,8 +321,7 @@ class TransferAndCall extends Component {
         // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
         this.state.from
       );
-    }
-    else {
+    } else {
       signObj = secp256k1.sign(
         Buffer.from(inputHash.substring(2), "hex"),
         // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
@@ -279,7 +330,10 @@ class TransferAndCall extends Component {
     }
     console.log(signObj);
 
-    let signatureInHex = "0x" + signObj.signature.toString('hex') + (signObj.recovery + 27).toString(16);
+    let signatureInHex =
+      "0x" +
+      signObj.signature.toString("hex") +
+      (signObj.recovery + 27).toString(16);
 
     this.setState({
       signature: signatureInHex,
@@ -288,7 +342,6 @@ class TransferAndCall extends Component {
   }
 
   sendSignedTransaction() {
-
     let transactionObject = {
       tokenContractIndex: this.state.selectedTokenContract.index,
       signature: this.state.signature,
@@ -322,20 +375,26 @@ class TransferAndCall extends Component {
       selectedServiceContract,
       to: selectedServiceContract.value.contractObj.options.address
     });
-    this.validateAddress('isToValid', selectedServiceContract.value.contractObj.options.address);
+    this.validateAddress(
+      "isToValid",
+      selectedServiceContract.value.contractObj.options.address
+    );
   }
 
   changeServiceContractTo(value) {
     this.state.serviceContracts.forEach(c => {
-      if (c.value.contractObj.options.address.toLowerCase() === value.toLowerCase())
+      if (
+        c.value.contractObj.options.address.toLowerCase() ===
+        value.toLowerCase()
+      )
         this.handleServiceContractChange(c);
-    })
+    });
   }
 
   handleParameterInput(index, e) {
     let parameters = this.state.callParameters;
     parameters[index].value = e.target.value;
-    this.setState({callParameters: parameters});
+    this.setState({ callParameters: parameters });
   }
 
   render() {
@@ -347,7 +406,7 @@ class TransferAndCall extends Component {
               <AmountInput
                 placeholder={"Amount"}
                 value={this.state.value}
-                onChange={e => this.handleInput('value', e)}
+                onChange={e => this.handleInput("value", e)}
               />
             </LeftComponent>
             <CustomSelect
@@ -365,52 +424,56 @@ class TransferAndCall extends Component {
               options={this.state.tokenContracts}
               styles={{
                 control: styles => ({
-                  ...styles, backgroundColor: 'white',
+                  ...styles,
+                  backgroundColor: "white",
                   borderRadius: "0.25rem",
                   transition: "box-shadow 0.15s ease",
-                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  boxShadow:
+                    "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
                   color: __THIRD,
                   borderColor: __GRAY_200,
                   border: "1px solid " + __GRAY_200
                 }),
-                input: styles => ({...styles, fontColor: __THIRD}),
-                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+                input: styles => ({ ...styles, fontColor: __THIRD }),
+                singleValue: (styles, { data }) => ({
+                  ...styles,
+                  color: __THIRD
+                })
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent>
-              From:
-            </LeftComponent>
+            <LeftComponent>From:</LeftComponent>
             <AddressInputField
               placeholder={"From Address"}
               value={this.state.from}
               onChange={e => {
-                this.handleInput('from', e);
-                this.validateAddress('isFromValid', e.target.value);
+                this.handleInput("from", e);
+                this.validateAddress("isFromValid", e.target.value);
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent>
-              To:
-            </LeftComponent>
+            <LeftComponent>To:</LeftComponent>
             <AddressInputField
               placeholder={"To Address"}
               value={this.state.to}
               onChange={e => {
-                this.handleInput('to', e);
-                this.validateAddress('isToValid', e.target.value);
-                if (isServiceContractAddress(this.context.serviceContracts, e.target.value))
+                this.handleInput("to", e);
+                this.validateAddress("isToValid", e.target.value);
+                if (
+                  isServiceContractAddress(
+                    this.context.serviceContracts,
+                    e.target.value
+                  )
+                )
                   this.changeServiceContractTo(e.target.value);
-                else this.setState({selectedServiceContract: null})
+                else this.setState({ selectedServiceContract: null });
               }}
             />
           </RowCentered>
           <RowCentered>
-            <LeftComponent>
-              Contract Name:
-            </LeftComponent>
+            <LeftComponent>Contract Name:</LeftComponent>
             <CustomSelect
               className="basic-single"
               classNamePrefix="select"
@@ -426,24 +489,27 @@ class TransferAndCall extends Component {
               options={this.state.serviceContracts}
               styles={{
                 control: styles => ({
-                  ...styles, backgroundColor: 'white',
+                  ...styles,
+                  backgroundColor: "white",
                   borderRadius: "0.25rem",
                   transition: "box-shadow 0.15s ease",
-                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  boxShadow:
+                    "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
                   color: __THIRD,
                   borderColor: __GRAY_200,
                   border: "1px solid " + __GRAY_200
                 }),
-                input: styles => ({...styles, fontColor: __THIRD}),
-                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+                input: styles => ({ ...styles, fontColor: __THIRD }),
+                singleValue: (styles, { data }) => ({
+                  ...styles,
+                  color: __THIRD
+                })
               }}
             />
           </RowCentered>
 
           <RowCentered>
-            <LeftComponent>
-              Contract Function:
-            </LeftComponent>
+            <LeftComponent>Contract Function:</LeftComponent>
             <CustomSelect
               className="basic-single"
               classNamePrefix="select"
@@ -459,12 +525,14 @@ class TransferAndCall extends Component {
               options={this.state.methods}
               styles={{
                 control: styles => ({
-                  ...styles, backgroundColor: 'white',
+                  ...styles,
+                  backgroundColor: "white",
                   // lineHeight: 1.5,
                   // padding: "0.625rem 0.75rem",
                   borderRadius: "0.25rem",
                   transition: "box-shadow 0.15s ease",
-                  boxShadow: "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
+                  boxShadow:
+                    "0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02)",
                   color: __THIRD,
                   borderColor: __GRAY_200,
                   border: "1px solid " + __GRAY_200
@@ -489,52 +557,64 @@ class TransferAndCall extends Component {
                 //     },
                 //   };
                 // },
-                input: styles => ({...styles, fontColor: __THIRD}),
+                input: styles => ({ ...styles, fontColor: __THIRD }),
                 // placeholder: styles => ({...styles, ...dot()}),
-                singleValue: (styles, {data}) => ({...styles, color: __THIRD}),
+                singleValue: (styles, { data }) => ({
+                  ...styles,
+                  color: __THIRD
+                })
               }}
             />
           </RowCentered>
-          {this.state.callParameters.length !== 0
-            ? (
-              <RowMultiLines>
-                <TitleRow>Method Parameters</TitleRow>
-                {this.state.callParameters.map((param, index) => {
-                  if (index > 1)
-                    return (
-                      <RowCentered key={"parameter" + index}>
-                        <LeftComponent>
-                          {param.name}
-                        </LeftComponent>
-                        <AddressInputField
-                          placeholder={param.type === "bytes32" ? "bytes32 or string" : param.type}
-                          value={param.value}
-                          onChange={e => {
-                            this.handleParameterInput(index, e);
-                          }}
-                        />
-                      </RowCentered>
-                    );
-                  else return null;
-                })}
-              </RowMultiLines>
-            )
-            : null}
+          {this.state.callParameters.length !== 0 ? (
+            <RowMultiLines>
+              <TitleRow>Method Parameters</TitleRow>
+              {this.state.callParameters.map((param, index) => {
+                if (index > 1)
+                  return (
+                    <RowCentered key={"parameter" + index}>
+                      <LeftComponent>{param.name}</LeftComponent>
+                      <AddressInputField
+                        placeholder={
+                          param.type === "bytes32"
+                            ? "bytes32 or string"
+                            : param.type
+                        }
+                        value={param.value}
+                        onChange={e => {
+                          this.handleParameterInput(index, e);
+                        }}
+                      />
+                    </RowCentered>
+                  );
+                else return null;
+              })}
+            </RowMultiLines>
+          ) : null}
           <Row>
-            <LeftComponent>
-              Transaction fee:
-            </LeftComponent>
+            <LeftComponent>Transaction fee:</LeftComponent>
             <AmountContainer>
               <div>
                 <Fee>
-                  {this.state.selectedTokenContract && this.state.selectedTokenContract.value.feeTransferAndCall }
-                </Fee> {this.state.selectedTokenContract && this.state.selectedTokenContract.value.symbol }
+                  {this.state.selectedTokenContract &&
+                    this.state.selectedTokenContract.value.feeTransferAndCall}
+                </Fee>{" "}
+                {this.state.selectedTokenContract &&
+                  this.state.selectedTokenContract.value.symbol}
               </div>
               <Padded>
-                {'≈'}<Fee>{this.state.selectedTokenContract && (this.state.selectedTokenContract.value.feeTransferAndCall * this.state.selectedTokenContract.value.defaultTokenToEthPrice)}</Fee> ETH
+                {"≈"}
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    this.state.selectedTokenContract.value.feeTransferAndCall *
+                      this.state.selectedTokenContract.value
+                        .defaultTokenToEthPrice}
+                </Fee>{" "}
+                ETH
               </Padded>
               <Padded>
-                {'≈'}<Fee>0.20</Fee> USD
+                {"≈"}
+                <Fee>0.20</Fee> USD
               </Padded>
             </AmountContainer>
           </Row>
@@ -542,20 +622,27 @@ class TransferAndCall extends Component {
             <PKInputField
               placeholder={"Private key of the from address"}
               value={this.state.privateKey}
-              onChange={e => this.handleInput('privateKey', e)}
+              onChange={e => this.handleInput("privateKey", e)}
             />
             <PrivateKeyInfo>
-              Your private key is only used to sign the entered transation data. It is neither stored nor send
-              somewhere.
+              Your private key is only used to sign the entered transation data.
+              It is neither stored nor send somewhere.
             </PrivateKeyInfo>
           </RowMultiLines>
           <WideButton
-            disabled={!(this.state.isValueValid && this.state.isToValid && this.state.isFromValid)}
+            disabled={
+              !(
+                this.state.isValueValid &&
+                this.state.isToValid &&
+                this.state.isFromValid
+              )
+            }
             onClick={async () => {
               await this.signTransactionData();
               this.sendSignedTransaction();
               upsertFromAddressesLocalStorage(this.state.from);
-            }}>
+            }}
+          >
             Send
           </WideButton>
         </FormContainer>
