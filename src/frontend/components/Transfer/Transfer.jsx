@@ -237,6 +237,43 @@ class Transfer extends Component {
     });
   }
 
+  handleQRCodeScan(data) {
+    console.log("reading data", data);
+    if (data) {
+      data = JSON.parse(data);
+      let index = this.context.tokenContracts.findIndex(tc => {
+        return tc.contractObj.options.address === data.tokenAddress;
+      });
+
+      const fromAccount = web3.eth.accounts.privateKeyToAccount(
+        web3.utils.isHexStrict(data.pk) ? data.pk : "0x" + data.pk
+      );
+
+      this.setState({
+        selectedTokenContract: this.state.tokenContracts[index],
+        value: data.value,
+        from: fromAccount.address,
+        privateKey: fromAccount.privateKey,
+        to: data.to,
+        qrCodeSection: false,
+      });
+      this.validateAddress("to", data.to);
+
+      if (
+        data.methodName ||
+        isServiceContractAddress(this.context.serviceContracts, data.to)
+      )
+        this.props.history.push(`/transferAndCall`, {
+          tokenContractIndex: index,
+          to: data.to,
+          value: data.value,
+          from: fromAccount.address,
+          privateKey: fromAccount.privateKey,
+          methodName: data.methodName
+        });
+    }
+  }
+
   handleInput(stateKey, e) {
     this.setState({ [stateKey]: e.target.value });
   }
@@ -247,8 +284,8 @@ class Transfer extends Component {
     });
   }
 
-  validateAddress(stateKey, e) {
-    if (this.context.web3.utils.isAddress(e.target.value)) {
+  validateAddress(stateKey, value) {
+    if (this.context.web3.utils.isAddress(value)) {
       this.setState({ [stateKey]: true });
     } else {
       this.setState({ [stateKey]: false });
@@ -390,7 +427,7 @@ class Transfer extends Component {
               value={this.state.from}
               onChange={e => {
                 this.handleInput("from", e);
-                this.validateAddress("isFromValid", e);
+                this.validateAddress("isFromValid", e.target.value);
               }}
             />
           </RowCentered>
@@ -401,14 +438,22 @@ class Transfer extends Component {
               value={this.state.to}
               onChange={e => {
                 this.handleInput("to", e);
-                this.validateAddress("isToValid", e);
+                this.validateAddress("isToValid", e.target.value);
                 if (
                   isServiceContractAddress(
                     this.context.serviceContracts,
                     e.target.value
                   )
                 )
-                  this.props.history.push(`/transferAndCall`);
+                  this.props.history.push(`/transferAndCall`, {
+                    // tokenContracts: this.state.tokenContracts,
+                    to: e.target.value,
+                    value: this.state.value,
+                    from: this.state.from,
+                    privateKey: this.state.privateKey,
+                    // methodName: this.state.methodName,
+                    tokenContractIndex: this.state.selectedTokenContract.index
+                  });
               }}
             />
           </RowCentered>
@@ -456,7 +501,7 @@ class Transfer extends Component {
                 <Fee>
                   {this.state.selectedTokenContract &&
                     this.state.selectedTokenContract.value.feeTransfer +
-                      this.state.value}
+                      parseInt(this.state.value ? this.state.value : 0)}
                 </Fee>{" "}
                 {this.state.selectedTokenContract &&
                   this.state.selectedTokenContract.value.symbol}
@@ -468,7 +513,7 @@ class Transfer extends Component {
                     Math.round(
                       10000 *
                         (this.state.selectedTokenContract.value.feeTransfer +
-                          this.state.value) *
+                          parseInt(this.state.value ? this.state.value : 0)) *
                         this.state.selectedTokenContract.value
                           .defaultTokenToEthPrice
                     ) / 10000}
