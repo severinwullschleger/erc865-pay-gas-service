@@ -522,7 +522,7 @@ class TransferAndCall extends Component {
             : null}
           <Row>
             <LeftComponent>
-              Transaction costs:
+              Transaction fee:
             </LeftComponent>
             <AmountContainer>
               <div>

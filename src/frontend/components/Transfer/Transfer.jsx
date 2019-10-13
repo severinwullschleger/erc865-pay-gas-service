@@ -17,6 +17,7 @@ import toast from "../../views/design-components/Notification/Toast.js";
 import { getTransaction } from "../MyTransactions/MyTransactionsMethods.js";
 import { timeout } from "../../../helpers/timeout.mjs";
 import { TRANSACTION_STATUS } from "../../../backend/db/transaction-states.mjs";
+import config from "../../../config.json";
 
 const Container = styled.div`
   display: flex;
@@ -43,6 +44,14 @@ const RowCentered = styled(Row)`
 const LeftComponent = styled.div`
   width: 18%;
   margin-right: 10px;
+`;
+
+const BoldLeftComponent = styled(LeftComponent)`
+  font-weight: bold;
+`;
+
+const BoldFee = styled.div`
+  font-weight: bold;
 `;
 
 const AmountInput = styled(InputField)`
@@ -153,13 +162,12 @@ export const callService = (method, transactionObject) => {
         const tx = response.data.txHash;
         toast.info(
           "The service successfully sent the transaction to the blockchain. TxHash: " +
-          tx.substring(0, 6) +
-          "..." +
-          tx.substring(tx.length - 4)
+            tx.substring(0, 6) +
+            "..." +
+            tx.substring(tx.length - 4)
         );
         polling(tx);
-      }
-      else {
+      } else {
         toast.error(
           "Something went wrong. The service was not able to send your transaction to the blockchain."
         );
@@ -375,7 +383,7 @@ class Transfer extends Component {
             />
           </RowCentered>
           <Row>
-            <LeftComponent>Transaction costs:</LeftComponent>
+            <LeftComponent>Transaction fee:</LeftComponent>
             <AmountContainer>
               <div>
                 <Fee>
@@ -397,7 +405,60 @@ class Transfer extends Component {
               </Padded>
               <Padded>
                 {"≈"}
-                <Fee>0.20</Fee> USD
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    Math.round(
+                      100 *
+                        this.state.selectedTokenContract.value.feeTransfer *
+                        this.state.selectedTokenContract.value
+                          .defaultTokenToEthPrice *
+                        config.currentEthUsdPrice
+                    ) / 100}
+                </Fee>{" "}
+                USD
+              </Padded>
+            </AmountContainer>
+          </Row>
+          <Row>
+            <BoldLeftComponent>Token total:</BoldLeftComponent>
+            <AmountContainer>
+              <BoldFee>
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    this.state.selectedTokenContract.value.feeTransfer +
+                      this.state.value}
+                </Fee>{" "}
+                {this.state.selectedTokenContract &&
+                  this.state.selectedTokenContract.value.symbol}
+              </BoldFee>
+              <Padded>
+                {"≈"}
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    Math.round(
+                      10000 *
+                        (this.state.selectedTokenContract.value.feeTransfer +
+                          this.state.value) *
+                        this.state.selectedTokenContract.value
+                          .defaultTokenToEthPrice
+                    ) / 10000}
+                </Fee>{" "}
+                ETH
+              </Padded>
+              <Padded>
+                {"≈"}
+                <Fee>
+                  {this.state.selectedTokenContract &&
+                    Math.round(
+                      100 *
+                        (this.state.selectedTokenContract.value.feeTransfer +
+                          this.state.value) *
+                        this.state.selectedTokenContract.value
+                          .defaultTokenToEthPrice *
+                        config.currentEthUsdPrice
+                    ) / 100}
+                </Fee>{" "}
+                USD
               </Padded>
             </AmountContainer>
           </Row>

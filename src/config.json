@@ -3,6 +3,7 @@
   "ethereumNetwork": "parity",
   "ethereumFullNodeAddress": "",
   "avgGasPriceInEth": 0.000000007,
+  "currentEthUsdPrice": 182.53,
   "acceptedTokens": [
     {
       "address": "",
