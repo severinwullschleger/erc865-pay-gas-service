@@ -6,7 +6,7 @@
   "currentEthUsdPrice": 182.53,
   "acceptedTokens": [
     {
-      "address": "",
+      "address": "0xB5C9Fad1b0b108116c3b35311480f3d77cA4A5aC",
       "name": "Dezos Token",
       "symbol": "DOS",
       "feeTransfer": 50,
