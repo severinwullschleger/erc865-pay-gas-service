@@ -106,7 +106,7 @@ const WideButton = styled(Button)`
   `}
 `;
 
-const QRCodeButton = styled(Button)`
+export const QRCodeButton = styled(Button)`
   margin-top: 10px;
   margin-bottom: 10px;
   display: flex;
@@ -257,7 +257,7 @@ class Transfer extends Component {
         to: data.to,
         qrCodeSection: false,
       });
-      this.validateAddress("to", data.to);
+      this.validateAddress("isToValid", data.to);
 
       if (
         data.methodName ||

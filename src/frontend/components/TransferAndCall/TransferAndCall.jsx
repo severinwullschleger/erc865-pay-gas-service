@@ -13,7 +13,9 @@ import { upsertFromAddressesLocalStorage } from "../../helpers/saveUserAddressIn
 import getEthereumAccounts from "../../../helpers/get-ethereum-accounts.mjs";
 import web3, { web3Provider } from "../../../helpers/web3Instance.mjs";
 import Web3Providers from "../../web3/Web3Providers.mjs";
-import { callService } from "../Transfer/Transfer.jsx";
+import { callService, QRCodeButton } from "../Transfer/Transfer.jsx";
+import Icon from "../../views/icons/Icon.js";
+import { QRCodeSection } from "../Transfer/QRCodeSection.jsx";
 
 const Container = styled.div`
   display: flex;
@@ -134,7 +136,9 @@ class TransferAndCall extends Component {
 
       // sign data
       privateKey: "",
-      showPrivateKey: true
+      showPrivateKey: true,
+
+      qrCodeSection: false
     };
   }
 
@@ -396,10 +400,53 @@ class TransferAndCall extends Component {
     this.setState({ callParameters: parameters });
   }
 
+  handleQRCodeScan(data) {
+    console.log("reading data", data);
+    if (data) {
+      data = JSON.parse(data);
+      let index = this.context.tokenContracts.findIndex(tc => {
+        return tc.contractObj.options.address === data.tokenAddress;
+      });
+
+      const fromAccount = web3.eth.accounts.privateKeyToAccount(
+        web3.utils.isHexStrict(data.pk) ? data.pk : "0x" + data.pk
+      );
+
+      this.setState({
+        selectedTokenContract: this.state.tokenContracts[index],
+        value: data.value,
+        from: fromAccount.address,
+        privateKey: fromAccount.privateKey,
+        to: data.to,
+        qrCodeSection: false,
+        showPrivateKey: false
+      });
+      this.validateAddress("isToValid", data.to);
+    }
+  }
+
   render() {
     return (
       <Container>
         <FormContainer>
+          <QRCodeButton
+            onClick={() => {
+              this.setState({ qrCodeSection: true });
+            }}
+          >
+            <Icon icon={"qr-scanner"} height={35} color={"white"} right={13} />
+            Scan QR Code instead of filling the form
+          </QRCodeButton>
+          {this.state.qrCodeSection ? (
+            <QRCodeSection
+              handleScan={data => {
+                this.handleQRCodeScan(data);
+              }}
+              handleError={error => {
+                console.error("did not work", error);
+              }}
+            />
+          ) : null}
           <RowCentered>
             <LeftComponent>
               <AmountInput
