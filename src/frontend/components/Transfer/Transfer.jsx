@@ -208,6 +208,7 @@ class Transfer extends Component {
       isValueValid: true,
       nonce: 0,
       privateKey: "",
+      showPrivateKey: true,
       qrCodeSection: false
     };
   }
@@ -256,7 +257,8 @@ class Transfer extends Component {
           from: fromAccount.address,
           privateKey: fromAccount.privateKey,
           to: data.to,
-          qrCodeSection: false
+          qrCodeSection: false,
+          showPrivateKey: false
         });
         this.validateAddress("isToValid", data.to);
 
@@ -275,7 +277,8 @@ class Transfer extends Component {
       } else {
         this.setState({
           privateKey: data,
-          qrCodeSection: false
+          qrCodeSection: false,
+          showPrivateKey: false
         });
       }
     }
@@ -545,15 +548,19 @@ class Transfer extends Component {
             </AmountContainer>
           </Row>
           <RowMultiLines>
-            <PKInputField
-              placeholder={"Private key of the from address"}
-              value={this.state.privateKey}
-              onChange={e => this.handleInput("privateKey", e)}
-            />
-            <PrivateKeyInfo>
-              Your private key is only used to sign the entered transation data.
-              It is neither stored nor send somewhere.
-            </PrivateKeyInfo>
+            {this.state.showPrivateKey ? (
+              <>
+                <PKInputField
+                  placeholder={"Private key of the from address"}
+                  value={this.state.privateKey}
+                  onChange={e => this.handleInput("privateKey", e)}
+                />
+                <PrivateKeyInfo>
+                  Your private key is only used to sign the entered transation
+                  data. It is neither stored nor send somewhere.
+                </PrivateKeyInfo>
+              </>
+            ) : null}
           </RowMultiLines>
           <WideButton
             disabled={
