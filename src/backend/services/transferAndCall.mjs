@@ -5,10 +5,7 @@ import {
 } from "../db/transactions-services.mjs";
 import { TRANSACTION_STATUS } from "../db/transaction-states.mjs";
 import config from "../../config.json";
-import {
-  serviceContracts,
-  tokenContracts
-} from "../../helpers/get-contracts.mjs";
+import { tokenContracts } from "../../helpers/get-contracts.mjs";
 import web3 from "../../helpers/web3Instance.mjs";
 
 export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
