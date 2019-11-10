@@ -403,25 +403,33 @@ class TransferAndCall extends Component {
   handleQRCodeScan(data) {
     console.log("reading data", data);
     if (data) {
-      data = JSON.parse(data);
-      let index = this.context.tokenContracts.findIndex(tc => {
-        return tc.contractObj.options.address === data.tokenAddress;
-      });
+      if (data.tokenAddress) {
+        data = JSON.parse(data);
+        let index = this.context.tokenContracts.findIndex(tc => {
+          return tc.contractObj.options.address === data.tokenAddress;
+        });
 
-      const fromAccount = web3.eth.accounts.privateKeyToAccount(
-        web3.utils.isHexStrict(data.pk) ? data.pk : "0x" + data.pk
-      );
+        const fromAccount = web3.eth.accounts.privateKeyToAccount(
+          web3.utils.isHexStrict(data.pk) ? data.pk : "0x" + data.pk
+        );
 
-      this.setState({
-        selectedTokenContract: this.state.tokenContracts[index],
-        value: data.value,
-        from: fromAccount.address,
-        privateKey: fromAccount.privateKey,
-        to: data.to,
-        qrCodeSection: false,
-        showPrivateKey: false
-      });
-      this.validateAddress("isToValid", data.to);
+        this.setState({
+          selectedTokenContract: this.state.tokenContracts[index],
+          value: data.value,
+          from: fromAccount.address,
+          privateKey: fromAccount.privateKey,
+          to: data.to,
+          qrCodeSection: false,
+          showPrivateKey: false
+        });
+        this.validateAddress("isToValid", data.to);
+      } else {
+        this.setState({
+          privateKey: data,
+          qrCodeSection: false,
+          showPrivateKey: false
+        });
+      }
     }
   }
 
