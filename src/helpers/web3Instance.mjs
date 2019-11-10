@@ -37,21 +37,28 @@ const getFrontendWeb3 = () => {
 
 const getBackendProvider = () => {
 
-  if (config.ethereumNetwork === 'main') {
-    web3Provider = new Web3.providers.WebsocketProvider('wss://infura.io/ws');
+  let protocol = "ws://";
+
+  if (config.ethereumFullNodeAddress === "infura.io/ws")
+    protocol = "wss://";
+
+  let fullNodeAddress = config.ethereumFullNodeAddress;
+
+  if (!fullNodeAddress) {
+    if (config.ethereumNetwork === 'main') {
+      fullNodeAddress = 'infura.io/ws';
+    }
+    else if (config.ethereumNetwork === 'ganache') {
+      fullNodeAddress = '127.0.0.1:7545';
+    }
+    else if (config.ethereumNetwork === 'parity') {
+      fullNodeAddress = '127.0.0.1:8546';
+    }
   }
-  else if (config.ethereumNetwork === 'ganache') {
-    web3Provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:7545');
-  }
-  else if (config.ethereumNetwork === 'parity') {
-    web3Provider = new Web3.providers.WebsocketProvider('ws://127.0.0.1:8546');
-  }
-  else if (config.ethereumNetwork === 'kovan') {
-    web3Provider = new Web3.providers.WebsocketProvider('ws://' + config.ethereumFullNodeAddress);   //connecting to digital ocean ethereum-kovan-node
-  }
-  else {
-    console.error('Ethereum network ' + config.ethereumNetwork + ' couldn\'t be found');
-  }
+
+  web3Provider = new Web3.providers.WebsocketProvider(protocol + fullNodeAddress);
+  
+
   web3Provider.on('connect', (e) => {
     console.log('Web3 Provider connected to ' + web3.currentProvider.connection.url);
   });
