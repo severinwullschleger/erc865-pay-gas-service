@@ -9,6 +9,7 @@ import {
   serviceContracts,
   tokenContracts
 } from "../../helpers/get-contracts.mjs";
+import web3 from "../../helpers/web3Instance.mjs";
 
 export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
   let promiEvent = Web3PromiEvent();
@@ -123,10 +124,13 @@ export const feeEstimation = async transactionObject => {
       from: config.unlockedServiceAccount,
       gas: 8000000
     })
-    .then(function(gasAmount) {
+    .then(async function(gasAmount) {
       console.log(gasAmount);
+
+      let gasPrice = await web3.eth.getGasPrice();
+
       return (
-        (gasAmount * config.avgGasPriceInEth) /
+        (gasAmount * web3.utils.fromWei(gasPrice)) /
         tokenContracts[transactionObject.tokenContractIndex]
           .defaultTokenToEthPrice
       );
