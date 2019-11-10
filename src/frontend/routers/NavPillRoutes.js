@@ -11,7 +11,7 @@ export const NavPillRoutes = [
   },
   {
     path: 'transactions',
-    name: 'My Transactions',
+    name: 'My transactions',
     icon: 'material'
   }
 ];
