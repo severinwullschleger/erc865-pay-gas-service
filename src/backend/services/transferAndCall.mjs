@@ -11,14 +11,6 @@ import {
 } from "../../helpers/get-contracts.mjs";
 
 export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
-  serviceContracts[0].contractObj.events.TestEvent(
-    undefined,
-    async (error, event) => {
-      if (error) console.error(error);
-      else console.log(event);
-    }
-  );
-
   let promiEvent = Web3PromiEvent();
 
   tokenContracts[transactionObject.tokenContractIndex].contractObj.methods
