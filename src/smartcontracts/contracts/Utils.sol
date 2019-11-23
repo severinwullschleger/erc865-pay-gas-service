@@ -51,7 +51,7 @@ library Utils {
     /**
     * @notice Recover signer address from a message by using his signature
     * @param hash bytes32 message, the hash is the signed message. What is recovered is the signer address.
-    * @param sig bytes signature, the signature is generated using web3.eth.sign()
+    * @param signature bytes signature, the signature is generated using web3.eth.sign()
     */
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
         // Check the signature length
