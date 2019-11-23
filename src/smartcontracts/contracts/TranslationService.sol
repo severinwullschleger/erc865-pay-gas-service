@@ -19,9 +19,10 @@ contract TranlationService {
     }
 
     mapping (bytes32 => TranslationRequest) requests;
-    
-    // the requester has 3 days to request an improvement, after these 3 days, the translator can collect the reward
-    uint256 timeForImprovementRequest = 60*60*3;    // 3 minutes for testing purposes   //60*60*24*3;
+
+    // the requester has around 3 days to request an improvement, after these 3 days, the translator can collect the reward
+    // in blocks, avg blocktime 13 seconds -> 60 * 60 * 24 * 3 / 13secs = 19938 blocks
+    uint256 timeForImprovementRequest = 14; // for testing purposes around 3 minutes instead of 3 days //*60*24;
 
     constructor(address _CHFTContracAddress) public {
         CHFTContract = CHFT(_CHFTContracAddress); 
@@ -35,7 +36,7 @@ contract TranlationService {
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         request.requester = _requester;
         request.reward = _reward;
-        request.improvementRequestedTimestamp = block.timestamp;
+        request.improvementRequestedTimestamp = block.number;
     }
     
     function withdrawRequestTranslation(address _requester, uint256 _value, string memory _originalUrl) public {
@@ -51,7 +52,7 @@ contract TranlationService {
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         
         require(_requester == request.requester, "only the requester can withdraw his request");
-        request.improvementRequestedTimestamp = block.timestamp;
+        request.improvementRequestedTimestamp = block.number;
     }
 
     function translationSubmission(address _translator, uint256 _value, string memory _originalUrl, string memory _translationUrl) public {
@@ -61,7 +62,7 @@ contract TranlationService {
         
         request.translator = _translator;
         request.translation = _translationUrl;
-        request.translationHandinTimestamp = block.timestamp;
+        request.translationHandinTimestamp = block.number;
 
     }
 
