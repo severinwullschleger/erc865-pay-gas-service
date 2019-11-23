@@ -84,8 +84,7 @@ contract TranlationService {
         
         require(_collector == request.translator, "only the translator can collect the reward");
         require(!request.rewardCollected, "the reward is already collected");
-        require(request.handinBlockNumber > request.requestBlockNumber, "the reward can only be collected if no improvement is requested");
-        
+
         require(request.handinBlockNumber - timeForImprovementRequest > request.requestBlockNumber, "the reward can only be collected if no improvement is requested and if the time for a request has expired");
         
         request.rewardCollected = true;
