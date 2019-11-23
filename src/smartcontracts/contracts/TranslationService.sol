@@ -28,6 +28,10 @@ contract TranlationService {
     }
 
     function requestTranslation(address _requester, uint256 _reward, string memory _originalUrl) public {
+
+        // make sure that the amount was really transferred
+        require(msg.sender == address(CHFTContract));
+        
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         request.requester = _requester;
         request.reward = _reward;
