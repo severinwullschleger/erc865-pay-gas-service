@@ -23,6 +23,10 @@ contract TranlationService {
     // the requester has 3 days to request an improvement, after these 3 days, the translator can collect the reward
     uint256 timeForImprovementRequest = 60*60*3;    // 3 minutes for testing purposes   //60*60*24*3;
 
+    constructor(address _CHFTContracAddress) public {
+        CHFTContract = CHFT(_CHFTContracAddress); 
+    }
+
     function requestTranslation(address _requester, uint256 _reward, string memory _originalUrl) public {
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         request.requester = _requester;
