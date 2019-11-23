@@ -142,16 +142,6 @@ class TransferAndCall extends Component {
     };
   }
 
-  isCallableMethod(e) {
-    return (
-      e.type === "function" &&
-      e.constant === false &&
-      e.inputs.length >= 2 &&
-      e.inputs[0].type === "address" &&
-      e.inputs[1].type === "uint256"
-    );
-  }
-
   async componentDidMount() {
     let tokenContracts = this.context.tokenContracts.map((c, index) => {
       return {
@@ -361,14 +351,7 @@ class TransferAndCall extends Component {
   }
 
   handleServiceContractChange(selectedServiceContract) {
-    let methods = [];
-    selectedServiceContract.value.contractObj._jsonInterface.forEach(e => {
-      if (this.isCallableMethod(e))
-        methods.push({
-          value: e,
-          label: e.name
-        });
-    });
+    const methods = this.getCallableMethods(selectedServiceContract);
 
     this.setState({
       selectedServiceContract,
@@ -381,6 +364,28 @@ class TransferAndCall extends Component {
     this.validateAddress(
       "isToValid",
       selectedServiceContract.value.contractObj.options.address
+    );
+  }
+
+  getCallableMethods(selectedServiceContract) {
+    let methods = [];
+    selectedServiceContract.value.contractObj._jsonInterface.forEach(e => {
+      if (this.isCallableMethod(e))
+        methods.push({
+          value: e,
+          label: e.name
+        });
+    });
+    return methods;
+  }
+
+  isCallableMethod(e) {
+    return (
+      e.type === "function" &&
+      e.constant === false &&
+      e.inputs.length >= 2 &&
+      e.inputs[0].type === "address" &&
+      e.inputs[1].type === "uint256"
     );
   }
 
