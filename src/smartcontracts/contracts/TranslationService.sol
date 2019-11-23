@@ -31,17 +31,21 @@ contract TranlationService {
     function requestTranslation(address _requester, uint256 _reward, string memory _originalUrl) public {
 
         // make sure that the amount was really transferred
+        // this function can only be called by the token contract to make sure that the _reward is always transfered
         require(msg.sender == address(CHFTContract));
-        
+
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         request.requester = _requester;
         request.reward = _reward;
         request.improvementRequestedTimestamp = block.number;
     }
-    
+
     function withdrawRequestTranslation(address _requester, uint256 _value, string memory _originalUrl) public {
+        // this function can be called either via the token contract or directly since the _value should be always 0
+        require(msg.sender == address(CHFTContract) || msg.sender == _requester);
+
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
-        
+
         require(_requester == request.requester, "only the requester can withdraw his request");
         require(request.translator == address(0), "the request can only be withdrawn if there is no translation already");
 
@@ -49,17 +53,23 @@ contract TranlationService {
     }
 
     function requestImprovement(address _requester, uint256 _value, string memory _originalUrl) public {
+        // this function can be called either via the token contract or directly since the _value should be always 0
+        require(msg.sender == address(CHFTContract) || msg.sender == _requester);
+
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
-        
+
         require(_requester == request.requester, "only the requester can withdraw his request");
         request.improvementRequestedTimestamp = block.number;
     }
 
     function translationSubmission(address _translator, uint256 _value, string memory _originalUrl, string memory _translationUrl) public {
+        // this function can be called either via the token contract or directly since the _value should be always 0
+        require(msg.sender == address(CHFTContract) || msg.sender == _translator);
+
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
-        
+
         require(request.translator == address(0) || request.translator == _translator, "already translated by someone else");
-        
+
         request.translator = _translator;
         request.translation = _translationUrl;
         request.translationHandinTimestamp = block.number;
@@ -67,6 +77,9 @@ contract TranlationService {
     }
 
     function collectReward(address _collector, uint256 _value, string memory _originalUrl) public {
+        // this function can be called either via the token contract or directly since the _value should be always 0
+        require(msg.sender == address(CHFTContract) || msg.sender == _collector);
+
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         
         require(_collector == request.translator, "only the translator can collect the reward");
