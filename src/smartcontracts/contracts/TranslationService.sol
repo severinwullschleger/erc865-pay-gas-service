@@ -9,10 +9,10 @@ contract TranlationService {
     struct TranslationRequest {
         address requester;
         uint256 reward;
-        uint improvementRequestedTimestamp;
+        uint requestBlockNumber;
         address translator;
         string translation;
-        uint256 translationHandinTimestamp;
+        uint256 handinBlockNumber;
         
         bool rewardCollected;
     }
@@ -36,7 +36,7 @@ contract TranlationService {
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         request.requester = _requester;
         request.reward = _reward;
-        request.improvementRequestedTimestamp = block.number;
+        request.requestBlockNumber = block.number;
     }
 
     function withdrawRequest(address _requester, uint256 _value, string memory _originalUrl) public {
@@ -59,7 +59,7 @@ contract TranlationService {
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
 
         require(_requester == request.requester, "only the requester can withdraw his request");
-        request.improvementRequestedTimestamp = block.number;
+        request.requestBlockNumber = block.number;
     }
 
     function translationSubmission(address _translator, uint256 _value, string memory _originalUrl, string memory _translationUrl) public {
@@ -72,7 +72,7 @@ contract TranlationService {
 
         request.translator = _translator;
         request.translation = _translationUrl;
-        request.translationHandinTimestamp = block.number;
+        request.handinBlockNumber = block.number;
 
     }
 
@@ -84,9 +84,9 @@ contract TranlationService {
         
         require(_collector == request.translator, "only the translator can collect the reward");
         require(!request.rewardCollected, "the reward is already collected");
-        require(request.translationHandinTimestamp > request.improvementRequestedTimestamp, "the reward can only be collected if no improvement is requested");
+        require(request.handinBlockNumber > request.requestBlockNumber, "the reward can only be collected if no improvement is requested");
         
-        require(request.translationHandinTimestamp - timeForImprovementRequest > request.improvementRequestedTimestamp, "the reward can only be collected if no improvement is requested and if the time for a request has expired");
+        require(request.handinBlockNumber - timeForImprovementRequest > request.requestBlockNumber, "the reward can only be collected if no improvement is requested and if the time for a request has expired");
         
         request.rewardCollected = true;
         require(CHFTContract.transfer(request.translator, request.reward));
