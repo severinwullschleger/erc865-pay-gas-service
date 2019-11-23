@@ -2,7 +2,6 @@ pragma solidity ^0.5.12;
 
 import "./CHFT.sol";
 
-
 contract TranlationService {
     
     CHFT CHFTContract;
@@ -40,15 +39,16 @@ contract TranlationService {
         request.improvementRequestedTimestamp = block.number;
     }
 
-    function withdrawRequestTranslation(address _requester, uint256 _value, string memory _originalUrl) public {
+    function withdrawRequest(address _requester, uint256 _value, string memory _originalUrl) public {
         // this function can be called either via the token contract or directly since the _value should be always 0
         require(msg.sender == address(CHFTContract) || msg.sender == _requester);
 
-        TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
+        TranslationRequest memory request = requests[keccak256(bytes(_originalUrl))];
 
         require(_requester == request.requester, "only the requester can withdraw his request");
         require(request.translator == address(0), "the request can only be withdrawn if there is no translation already");
 
+        delete requests[keccak256(bytes(_originalUrl))];
         require(CHFTContract.transfer(request.requester, request.reward));
     }
 
