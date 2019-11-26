@@ -20,7 +20,7 @@ const run = async () => {
 
   await mintTokens(tokenContract)
     .then(() => {
-      console.log("The DOS tokens have been minted.");
+      console.log("The tokens have been minted.");
     })
     .catch(error => console.error(error));
 
