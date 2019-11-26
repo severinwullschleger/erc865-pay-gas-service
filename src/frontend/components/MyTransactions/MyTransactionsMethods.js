@@ -2,7 +2,7 @@ import { getDomain } from "../../../helpers/getDomain.mjs";
 import { getFromAddresses } from "../../helpers/saveUserAddressInLocalStorage.js";
 import queryString from "query-string";
 
-export const getTransactions = () => {
+export const  getTransactions = () => {
   const addresses = queryString.stringify(
     { fromAddresses: JSON.parse(localStorage.getItem("fromAddresses")) },
     { arrayFormat: "comma" }

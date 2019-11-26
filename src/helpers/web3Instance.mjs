@@ -39,14 +39,12 @@ const getFrontendWeb3 = () => {
 
 const getBackendProvider = () => {
   let protocol = "ws://";
-
-  if (config.ethereumFullNodeAddress === "infura.io/ws") protocol = "wss://";
-
   let fullNodeAddress = config.ethereumFullNodeAddress;
 
   if (!fullNodeAddress) {
     if (config.ethereumNetwork === "main") {
       fullNodeAddress = "infura.io/ws";
+      protocol = "wss://";
     } else if (config.ethereumNetwork === "ganache") {
       fullNodeAddress = "127.0.0.1:7545";
     } else if (config.ethereumNetwork === "parity") {

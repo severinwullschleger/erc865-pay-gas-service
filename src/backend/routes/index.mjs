@@ -29,12 +29,11 @@ router.post(
 );
 
 router.get(
-  '/transactions',
+  "/transactions",
   requestHandler(async req => {
     if (req.query.fromAddresses)
-      return getTransactions(req.query.fromAddresses.split(','));
-    else
-      return getTransactions();
+      return getTransactions(req.query.fromAddresses.split(","));
+    else return getTransactions();
   })
 );
 

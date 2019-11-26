@@ -2,16 +2,12 @@ import GanacheServiceContractAddress from '../smartcontracts/constants/GanacheSe
 import GanacheTokenContractAddress from '../smartcontracts/constants/GanacheTokenContractAddress.json';
 import config from "../config.json"
 import web3 from "./web3Instance.mjs"
-
 export let tokenContracts = [];
 export let serviceContracts = [];
 
-
 const setContracts = () => {
-
   if (tokenContracts.length === 0) {
     if (config.ethereumNetwork !== 'ganache' && config.ethereumNetwork !== 'parity') {
-
       tokenContracts = config.acceptedTokens.map(c => {
         return {
           ...c,
