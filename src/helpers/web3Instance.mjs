@@ -3,6 +3,7 @@ import Web3Providers from "../frontend/web3/Web3Providers.mjs";
 import config from "../config.json";
 
 let web3;
+export let web3Provider;
 const getWeb3Instance = () => {
   if (!web3) {
     web3 =
@@ -49,7 +50,8 @@ const getBackendProvider = () => {
       fullNodeAddress = "127.0.0.1:8546";
     }
   }
-  return new Web3.providers.WebsocketProvider(protocol + fullNodeAddress);
+  web3Provider = new Web3.providers.WebsocketProvider(protocol + fullNodeAddress);
+  return web3Provider;
 };
 
 getWeb3Instance();
