@@ -233,84 +233,88 @@ class TransferAndCall extends Component {
     }
   }
 
-async signTransactionData() {
-  let callParameterTypes = this.state.callParameters.map(e => {
-    return e.type;
-  });
-  // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
-  callParameterTypes.slice(2);
+  async signTransactionData() {
+    let callParameterTypes = this.state.callParameters.map(e => {
+      return e.type;
+    });
+    // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
+    callParameterTypes = callParameterTypes.slice(2);
 
-  let callParameterValues = this.state.callParameters.map(e => {
-    if (e.type === "bytes32" && e.value) {
-      if (!this.context.web3.utils.isHexStrict(e.value))
-        return this.context.web3.utils.utf8ToHex(e.value);
-    }
-    return e.value;
-  });
-  // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
-  callParameterValues.slice(2);
+    let callParameterValues = this.state.callParameters.map(e => {
+      if (e.type === "bytes32" && e.value) {
+        if (!this.context.web3.utils.isHexStrict(e.value))
+          return this.context.web3.utils.utf8ToHex(e.value);
+      }
+      return e.value;
+    });
+    // we ignore the first two parameters of the service contract method since _from and _value are added by the token contract when the service contract is called.
+    callParameterValues = callParameterValues.slice(2);
+    console.log(callParameterTypes, callParameterValues);
 
-  const callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
-    callParameterTypes,
-    callParameterValues
-  );
-  this.setState({ callParametersEncoded });
+    const callParametersEncoded = this.context.web3.eth.abi.encodeParameters(
+      callParameterTypes,
+      callParameterValues
+    );
+    this.setState({ callParametersEncoded });
 
-  const nonce = Date.now();
-  // transferAndCallPreSignedHashing from Utils.sol
-  // keccak256(abi.encode(bytes4(0x38980f82), _token, _to, _value, _fee, _nonce, _methodName, _args));
-  const input = this.context.web3.eth.abi.encodeParameters(
-    [
-      "bytes4",
-      "address",
-      "address",
-      "uint256",
-      "uint256",
-      "uint256",
-      "bytes4",
-      "bytes"
-    ],
-    [
-      "0x38980f82",
-      this.state.selectedTokenContract.value.contractObj.options.address,
-      this.state.to,
-      this.state.value.toString(),
-      this.state.selectedTokenContract.value.feeTransferAndCall.toString(),
-      nonce.toString(),
-      // call parameters
-      this.state.selectedMethod.value.signature,
-      callParametersEncoded
-    ]
-  );
+    const nonce = Date.now();
+    // transferAndCallPreSignedHashing from Utils.sol
+    // keccak256(abi.encode(bytes4(0x38980f82), _token, _to, _value, _fee, _nonce, _methodName, _args));
+    const input = this.context.web3.eth.abi.encodeParameters(
+      [
+        "bytes4",
+        "address",
+        "address",
+        "uint256",
+        "uint256",
+        "uint256",
+        "bytes4",
+        "bytes"
+      ],
+      [
+        "0x38980f82",
+        this.state.selectedTokenContract.value.contractObj.options.address,
+        this.state.to,
+        this.state.value.toString(),
+        this.state.selectedTokenContract.value.feeTransferAndCall.toString(),
+        nonce.toString(),
+        // call parameters
+        this.state.selectedMethod.value.signature,
+        callParametersEncoded
+      ]
+    );
 
-  const inputHash = this.context.web3.utils.keccak256(input);
-  const privateKey =
-    this.state.privateKey.substring(0, 2) === "0x"
-      ? this.state.privateKey.substring(2)
-      : this.state.privateKey;
+    const inputHash = this.context.web3.utils.keccak256(input);
+    const privateKey =
+      this.state.privateKey.substring(0, 2) === "0x"
+        ? this.state.privateKey.substring(2)
+        : this.state.privateKey;
 
-  const signObj =
-    this.state.selectedTokenContract.value.signMethod === "personalSign"
-      ? await web3.eth.personal.sign(inputHash.substring(2), this.state.from)
-      : secp256k1.sign(
-          Buffer.from(inputHash.substring(2), "hex"),
-          Buffer.from(privateKey, "hex")
-        );
+    const signObj =
+      this.state.selectedTokenContract.value.signMethod === "personalSign"
+        ? await web3.eth.personal.sign(inputHash.substring(2), this.state.from)
+        : secp256k1.sign(
+            Buffer.from(inputHash.substring(2), "hex"),
+            Buffer.from(privateKey, "hex")
+          );
 
-  const signatureInHex =
-    "0x" + signObj.signature.toString("hex") + signObj.recovery <= 1
-      ? (signObj.recovery + 27).toString(16)
-      : signObj.recovery.toString(16);
+    const signatureInHex =
+      "0x" +
+      signObj.signature.toString("hex") +
+      (signObj.recovery <= 1
+        ? (signObj.recovery + 27).toString(16)
+        : signObj.recovery.toString(16));
 
-  this.setState({
-    signature: signatureInHex,
-    nonce
-  });
-}
+    this.setState({
+      signature: signatureInHex,
+      nonce
+    });
+  }
 
   sendSignedTransaction() {
     let transactionObject = {
       tokenContractIndex: this.state.selectedTokenContract.index,
+      tokenContract: this.state.selectedTokenContract.value.address,
       signature: this.state.signature,
       from: this.state.from,
       to: this.state.to,
