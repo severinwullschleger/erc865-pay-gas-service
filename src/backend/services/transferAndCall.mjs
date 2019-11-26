@@ -8,12 +8,14 @@ import config from "../../config.json";
 import { tokenContracts } from "../../helpers/get-contracts.mjs";
 import web3 from "../../helpers/web3Instance.mjs";
 
-export const sendTransferAndCallPreSignedTransaction = transactionObject => {
+export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
+  let promiEvent = Web3PromiEvent();
+
   const tokenContract = tokenContracts.find(
     contract => contract.address === transactionObject.tokenContract
   );
 
-  return tokenContract.contractObj.methods
+  tokenContract.contractObj.methods
     .transferAndCallPreSigned(
       transactionObject.signature,
       transactionObject.from,
@@ -35,8 +37,12 @@ export const sendTransferAndCallPreSignedTransaction = transactionObject => {
         config.unlockedServiceAccount,
         "transferAndCall"
       );
-      return { txHash: tx, saveToDbSuccess };
+
+      const txObject = { txHash: tx, saveToDbSuccess };
+      promiEvent.eventEmitter.emit("transactionHash", txObject);
+      promiEvent.resolve(txObject);
     })
+
     .on("receipt", async receipt => {
       updateTransaction(
         receipt.transactionHash,
@@ -44,22 +50,57 @@ export const sendTransferAndCallPreSignedTransaction = transactionObject => {
           ? TRANSACTION_STATUS.CONFIRMED
           : TRANSACTION_STATUS.REVERTED,
         receipt
-      );
+      )
+        .then(() => {
+          promiEvent.eventEmitter.emit("receipt", {
+            receipt,
+            updateDBSuccess: true
+          });
+        })
+        .catch(error => {
+          promiEvent.eventEmitter.emit("receipt", {
+            receipt,
+            updateDBSuccess: false,
+            error
+          });
+        });
     })
     .on("error", errorReceipt => {
       console.log(errorReceipt);
-      const errorObj = JSON.parse(
-        errorReceipt.message.substring(
-          "Transaction has been reverted by the EVM:\\n".length - 1
+      if (errorReceipt) {
+        const errorObj = JSON.parse(
+          errorReceipt.message.substring(
+            "Transaction has been reverted by the EVM:\\n".length - 1
+          )
+        );
+        updateTransaction(
+          errorObj.transactionHash,
+          TRANSACTION_STATUS.REVERTED,
+          null,
+          errorObj
         )
-      );
-      updateTransaction(
-        errorObj.transactionHash,
-        TRANSACTION_STATUS.ERROR,
-        null,
-        errorObj
-      );
+          .then(() => {
+            promiEvent.eventEmitter.emit("error", {
+              errorObj,
+              updateDBSuccess: true
+            });
+          })
+          .catch(error => {
+            promiEvent.eventEmitter.emit("error", {
+              errorObj,
+              updateDBSuccess: false,
+              error
+            });
+          });
+      } else {
+        promiEvent.eventEmitter.emit("error", {
+          errorMessage: "An error occurred.",
+          updateDBSuccess: false
+        });
+      }
     });
+
+  return promiEvent.eventEmitter;
 };
 
 export const feeEstimation = async transactionObject => {
