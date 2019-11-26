@@ -8,18 +8,18 @@ import config from "../../config.json";
 import { tokenContracts } from "../../helpers/get-contracts.mjs";
 import web3 from "../../helpers/web3Instance.mjs";
 
-export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
-  let promiEvent = Web3PromiEvent();
+export const sendTransferAndCallPreSignedTransaction = transactionObject => {
+  const tokenContract = tokenContracts.find(
+    contract => contract.address === transactionObject.tokenContract
+  );
 
-  tokenContracts[transactionObject.tokenContractIndex].contractObj.methods
+  return tokenContract.contractObj.methods
     .transferAndCallPreSigned(
       transactionObject.signature,
       transactionObject.from,
       transactionObject.to,
       transactionObject.value.toString(),
-      tokenContracts[
-        transactionObject.tokenContractIndex
-      ].feeTransferAndCall.toString(),
+      tokenContract.feeTransferAndCall.toString(),
       transactionObject.nonce.toString(),
       transactionObject.methodName,
       transactionObject.callParametersEncoded
@@ -35,12 +35,8 @@ export const sendTransferAndCallPreSignedTransaction = async transactionObject =
         config.unlockedServiceAccount,
         "transferAndCall"
       );
-
-      const txObject = { txHash: tx, saveToDbSuccess };
-      promiEvent.eventEmitter.emit("transactionHash", txObject);
-      promiEvent.resolve(txObject);
+      return { txHash: tx, saveToDbSuccess };
     })
-
     .on("receipt", async receipt => {
       updateTransaction(
         receipt.transactionHash,
@@ -48,57 +44,22 @@ export const sendTransferAndCallPreSignedTransaction = async transactionObject =
           ? TRANSACTION_STATUS.CONFIRMED
           : TRANSACTION_STATUS.REVERTED,
         receipt
-      )
-        .then(() => {
-          promiEvent.eventEmitter.emit("receipt", {
-            receipt,
-            updateDBSuccess: true
-          });
-        })
-        .catch(error => {
-          promiEvent.eventEmitter.emit("receipt", {
-            receipt,
-            updateDBSuccess: false,
-            error
-          });
-        });
+      );
     })
     .on("error", errorReceipt => {
       console.log(errorReceipt);
-      if (errorReceipt) {
-        const errorObj = JSON.parse(
-          errorReceipt.message.substring(
-            "Transaction has been reverted by the EVM:\\n".length - 1
-          )
-        );
-        updateTransaction(
-          errorObj.transactionHash,
-          TRANSACTION_STATUS.ERROR,
-          null,
-          errorObj
+      const errorObj = JSON.parse(
+        errorReceipt.message.substring(
+          "Transaction has been reverted by the EVM:\\n".length - 1
         )
-          .then(() => {
-            promiEvent.eventEmitter.emit("error", {
-              errorObj,
-              updateDBSuccess: true
-            });
-          })
-          .catch(error => {
-            promiEvent.eventEmitter.emit("error", {
-              errorObj,
-              updateDBSuccess: false,
-              error
-            });
-          });
-      } else {
-        promiEvent.eventEmitter.emit("error", {
-          errorMessage: "An error occurred.",
-          updateDBSuccess: false
-        });
-      }
+      );
+      updateTransaction(
+        errorObj.transactionHash,
+        TRANSACTION_STATUS.ERROR,
+        null,
+        errorObj
+      );
     });
-
-  return promiEvent.eventEmitter;
 };
 
 export const feeEstimation = async transactionObject => {
