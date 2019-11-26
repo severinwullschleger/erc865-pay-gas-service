@@ -9,17 +9,17 @@ export const getSmartContractInputs = () => {
     language: "Solidity",
     // Required
     sources: {
-      "DOS.sol": {
+      "CHFT.sol": {
         content: fs.readFileSync(
-          path.resolve(DIR_NAME, "src/smartcontracts/contracts/DOS.sol"),
+          path.resolve(DIR_NAME, "src/smartcontracts/contracts/CHFT.sol"),
           "utf-8"
         )
       },
-      "EurekaPlatform.sol": {
+      "TranslationService.sol": {
         content: fs.readFileSync(
           path.resolve(
             DIR_NAME,
-            "src/smartcontracts/contracts/EurekaPlatform.sol"
+            "src/smartcontracts/contracts/TranslationService.sol"
           ),
           "utf-8"
         )
