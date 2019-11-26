@@ -2,7 +2,9 @@ pragma solidity ^0.5.12;
 
 import "./CHFT.sol";
 
-contract TranlationService {
+contract TranslationService {
+
+    address contractOwner;
     
     CHFT CHFTContract;
 
@@ -22,9 +24,14 @@ contract TranlationService {
     // the requester has around 3 days to request an improvement, after these 3 days, the translator can collect the reward
     // in blocks, avg blocktime 13 seconds -> 60 * 60 * 24 * 3 / 13secs = 19938 blocks
     uint256 timeForImprovementRequest = 14; // for testing purposes around 3 minutes instead of 3 days //*60*24;
+    
+    constructor() public {
+        contractOwner = msg.sender;
+    }
 
-    constructor(address _CHFTContracAddress) public {
-        CHFTContract = CHFT(_CHFTContracAddress); 
+    function setCHFTContract(address _chftAddress) public {
+        require(msg.sender == contractOwner);
+        CHFTContract = CHFT(_chftAddress);
     }
 
     function requestTranslation(address _requester, uint256 _reward, string memory _originalUrl) public {
@@ -84,8 +91,9 @@ contract TranlationService {
         
         require(_collector == request.translator, "only the translator can collect the reward");
         require(!request.rewardCollected, "the reward is already collected");
-
-        require(request.handinBlockNumber - timeForImprovementRequest > request.requestBlockNumber, "the reward can only be collected if no improvement is requested and if the time for a request has expired");
+        
+        require(request.requestBlockNumber < request.handinBlockNumber, "the reward can only be collected if there is no improvement request outstanding");
+        require(block.number - timeForImprovementRequest >= request.handinBlockNumber, "the reward can only be collected if the time for a request has expired");
         
         request.rewardCollected = true;
         require(CHFTContract.transfer(request.translator, request.reward));
