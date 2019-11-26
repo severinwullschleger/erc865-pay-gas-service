@@ -6,6 +6,8 @@ import cors from "cors";
 import router from "./routes/index.mjs";
 import path from "path";
 import mongodb from "mongodb";
+import { initializeWeb3 } from "../helpers/web3Instance.mjs";
+import {initializeContracts} from "../helpers/get-contracts.mjs";
 
 const __dirname = path.resolve();
 
@@ -29,6 +31,9 @@ const startApplication = async () => {
       console.log(err);
       process.exit(1);
     });
+
+  initializeWeb3();
+  initializeContracts();
 
   const app = express();
 

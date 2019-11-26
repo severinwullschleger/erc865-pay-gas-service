@@ -50,8 +50,18 @@ const getBackendProvider = () => {
       fullNodeAddress = "127.0.0.1:8546";
     }
   }
+  console.log("Connecting to", protocol + fullNodeAddress);
   web3Provider = new Web3.providers.WebsocketProvider(protocol + fullNodeAddress);
   return web3Provider;
+};
+
+export const initializeWeb3 = () => {
+  if (!web3) {
+    web3 =
+      typeof window !== "undefined"
+        ? getFrontendWeb3()
+        : new Web3(getBackendProvider());
+  }
 };
 
 getWeb3Instance();

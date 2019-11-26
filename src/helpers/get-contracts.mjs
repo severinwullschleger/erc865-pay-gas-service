@@ -44,3 +44,7 @@ const setContracts = () => {
 
 setContracts();
 
+export const initializeContracts = () => {
+  setContracts();
+};
+
