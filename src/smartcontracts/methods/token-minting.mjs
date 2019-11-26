@@ -3,6 +3,9 @@ import web3 from "../../helpers/web3Instance.mjs";
 
 export const mintTokens = async tokenContract => {
   const accounts = await getEthereumAccounts(web3);
+
+  accounts.push("0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb");
+
   const contractOwner = accounts[0];
   let tokenAmounts = [];
   accounts.forEach(() => {
