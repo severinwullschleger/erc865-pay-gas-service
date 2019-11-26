@@ -303,11 +303,11 @@ class Transfer extends Component {
   }
 
   async signTransactionData() {
-    let nonce = Date.now();
+    const nonce = Date.now();
     // transferPreSignedHashing from Utils.sol
     // function transferPreSignedHashing(address _token, address _to, uint256 _value, uint256 _fee, uint256 _nonce)
-    //   return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
-    let input = this.context.web3.eth.abi.encodeParameters(
+    // return keccak256(abi.encode(bytes4(0x15420b71), _token, _to, _value, _fee, _nonce));
+    const input = this.context.web3.eth.abi.encodeParameters(
       ["bytes4", "address", "address", "uint256", "uint256", "uint256"],
       [
         "0x15420b71",
@@ -318,31 +318,22 @@ class Transfer extends Component {
         nonce.toString()
       ]
     );
-    console.log(input);
 
-    let inputHash = this.context.web3.utils.keccak256(input);
-    let privateKey;
-    if (this.state.privateKey.substring(0, 2) === "0x")
-      privateKey = this.state.privateKey.substring(2);
-    else privateKey = this.state.privateKey;
+    const inputHash = this.context.web3.utils.keccak256(input);
+    const privateKey =
+      this.state.privateKey.substring(0, 2) === "0x"
+        ? this.state.privateKey.substring(2)
+        : this.state.privateKey;
 
-    let signObj;
-    if (this.state.selectedTokenContract.value.signMethod === "personalSign") {
-      signObj = await web3.eth.personal.sign(
-        inputHash.substring(2),
-        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
-        this.state.from
-      );
-    } else {
-      signObj = secp256k1.sign(
-        Buffer.from(inputHash.substring(2), "hex"),
-        // 3d63b5b61cc9636a143f4d2c56a9609eb459bc2f8f168e448b65f218893fef9f
-        Buffer.from(privateKey, "hex")
-      );
-    }
-    console.log(signObj);
+    const signObj =
+      this.state.selectedTokenContract.value.signMethod === "personalSign"
+        ? await web3.eth.personal.sign(inputHash.substring(2), this.state.from)
+        : secp256k1.sign(
+            Buffer.from(inputHash.substring(2), "hex"),
+            Buffer.from(privateKey, "hex")
+          );
 
-    let signatureInHex =
+    const signatureInHex =
       "0x" +
       signObj.signature.toString("hex") +
       (signObj.recovery + 27).toString(16);
