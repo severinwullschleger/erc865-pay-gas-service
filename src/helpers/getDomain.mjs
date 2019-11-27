@@ -2,8 +2,7 @@ import {isProduction} from './isProduction.mjs';
 
 export const getDomain = () => {
   if (isProduction()) {
-    // TODO: insert prod url
-    return '';
+    return 'https://pay-gas-service.herokuapp.com';
   }
   return 'http://localhost:8080';
 };
