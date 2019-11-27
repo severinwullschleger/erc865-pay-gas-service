@@ -1,3 +1,11 @@
+# ERC-865 pay gas service
+
+The author of this service is Severin Wullschleger.
+
+
+
+
+
 
 #### Starting parity dev chain
 Unlocking more than one address:
@@ -15,7 +23,7 @@ sudo parity --config dev --geth --unlock 0x00a329c0648769a73afac7f9381e08fb43dbe
 
 #### Connect remix with localhost
 ```
-remixd -s C:\Users\sever\GitHub\erc865-pay-gas-service\src\smartcontracts\contracts --remix-ide https://remix.ethereum.org
+remixd -s ~/Documents/GitHub/erc865-pay-gas-service/src/smartcontracts/contracts --remix-ide https://remix.ethereum.org
 ```
 
 
