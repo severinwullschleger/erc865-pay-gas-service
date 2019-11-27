@@ -24,7 +24,7 @@ const startApplication = async () => {
     useUnifiedTopology: true
   })
     .then(client => {
-      db = client.db("heroku_g621jvzr");
+      db = client.db(process.env.DB_NAME);
       console.log("Connected to database.");
     })
     .catch(err => {
