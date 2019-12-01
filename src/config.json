@@ -1,7 +1,7 @@
 {
   "unlockedServiceAccount": "0x8d68e1ae44513b895ba3a430e4d60c305269f22a",
   "ethereumNetwork": "parity",
-  "ethereumFullNodeAddress": "127.0.0.1:8546",
+  "ethereumFullNodeAddress": "83.150.22.154:8546",
   "currentEthUsdPrice": 148.43,
   "acceptedTokens": [
     {
