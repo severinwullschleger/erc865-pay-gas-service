@@ -51,7 +51,22 @@ const getBackendProvider = () => {
     }
   }
   console.log("Connecting to", protocol + fullNodeAddress);
-  web3Provider = new Web3.providers.WebsocketProvider(protocol + fullNodeAddress);
+  web3Provider = new Web3.providers.WebsocketProvider(
+    protocol + fullNodeAddress
+  );
+
+  web3Provider.on("connect", e => {
+    console.log(
+      "Web3 Provider connected to " + web3.currentProvider.connection.url
+    );
+  });
+  web3Provider.on("error", e => {
+    console.error("Web3 Provider Error", e);
+  });
+  web3Provider.on("end", e => {
+    console.error("Web3 Provider Ended", e);
+  });
+
   return web3Provider;
 };
 
