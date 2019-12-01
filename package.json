@@ -26,7 +26,8 @@
     "solc": "^0.5.11",
     "styled-components": "latest",
     "web3": "^1.2.1",
-    "web3-core-promievent": "^1.2.1"
+    "web3-core-promievent": "^1.2.1",
+    "dotenv": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -49,7 +50,6 @@
   ],
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "dotenv": "latest",
     "nodemon": "^1.18.10"
   }
 }
