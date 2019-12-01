@@ -1,1 +1,1 @@
-web: node --experimental-modules src/backend
+web: node src/backend
