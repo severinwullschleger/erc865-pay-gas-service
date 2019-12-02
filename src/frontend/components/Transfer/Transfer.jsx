@@ -228,21 +228,29 @@ class Transfer extends Component {
       // testing purposes
       value: 400,
       isValueValid: true,
-      // from: web3Provider === Web3Providers.NO_PROVIDER ? '0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
-      from: "0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb", // deactivate MetaMask again
+      from: web3Provider === Web3Providers.NO_PROVIDER ? '' : await getEthereumAccounts(web3).then(accounts => {return accounts[0]}),
+      // from: "0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb", // deactivate MetaMask again
       isFromValid: true,
-      to: "0x25fc28613d205f3c9ae0937827Ff6Ab07754e53a",
+      to: "",
       isToValid: true,
       privateKey:
-        "95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F" // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
+        "" //"95FE3783808009AFDA9A614D46511E304FD435C7E0ECE24A52E20D0A16C50C8F" // from 0x7b9A6bf86BB7317DF7562106eCc45ad49acFaAeb
     });
   }
 
   handleQRCodeScan(data) {
     console.log("reading data", data);
     if (data) {
-      if (data.tokenAddress) {
+      try {
         data = JSON.parse(data);
+      } catch (error) {
+        this.setState({
+          privateKey: data,
+          qrCodeSection: false,
+          showPrivateKey: false
+        });
+      }
+      if (data.tokenAddress) {
         let index = this.context.tokenContracts.findIndex(tc => {
           return tc.contractObj.options.address === data.tokenAddress;
         });
