@@ -11,6 +11,11 @@ import web3 from "../../helpers/web3Instance.mjs";
 export const sendTransferAndCallPreSignedTransaction = async transactionObject => {
   let promiEvent = Web3PromiEvent();
 
+  await web3.eth.personal
+    .unlockAccount(config.unlockedServiceAccount, config.unlockPassword, 10000)  // 24 hours
+    .then(console.log(config.unlockedServiceAccount, "unlocked"))
+    .catch(console.error);
+
   const tokenContract = tokenContracts.find(
     contract => contract.address === transactionObject.tokenContract
   );

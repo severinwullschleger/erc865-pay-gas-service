@@ -6,9 +6,15 @@ import {
 import { TRANSACTION_STATUS } from "../db/transaction-states.mjs";
 import config from "../../config.json";
 import { tokenContracts } from "../../helpers/get-contracts.mjs";
+import web3 from "../../helpers/web3Instance.mjs";
 
 export const sendTransferPreSignedTransaction = async transactionObject => {
   let promiEvent = Web3PromiEvent();
+
+  await web3.eth.personal
+    .unlockAccount(config.unlockedServiceAccount, config.unlockPassword, 10000)  // 24 hours
+    .then(console.log(config.unlockedServiceAccount, "unlocked"))
+    .catch(console.error);
 
   tokenContracts[transactionObject.tokenContractIndex].contractObj.methods
     .transferPreSigned(
