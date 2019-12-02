@@ -89,11 +89,11 @@ contract TranslationService {
 
         TranslationRequest storage request = requests[keccak256(bytes(_originalUrl))];
         
-        require(_collector == request.translator, "only the translator can collect the reward");
-        require(!request.rewardCollected, "the reward is already collected");
-        
-        require(request.requestBlockNumber < request.handinBlockNumber, "the reward can only be collected if there is no improvement request outstanding");
-        require(block.number - timeForImprovementRequest >= request.handinBlockNumber, "the reward can only be collected if the time for a request has expired");
+//        require(_collector == request.translator, "only the translator can collect the reward");
+//        require(!request.rewardCollected, "the reward is already collected");
+//
+//        require(request.requestBlockNumber < request.handinBlockNumber, "the reward can only be collected if there is no improvement request outstanding");
+//        require(block.number - timeForImprovementRequest >= request.handinBlockNumber, "the reward can only be collected if the time for a request has expired");
         
         request.rewardCollected = true;
         require(CHFTContract.transfer(request.translator, request.reward));
