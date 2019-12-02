@@ -399,8 +399,8 @@ class TransferAndCall extends Component {
   handleQRCodeScan(data) {
     console.log("reading data", data);
     if (data) {
+      data = JSON.parse(data);
       if (data.tokenAddress) {
-        data = JSON.parse(data);
         let index = this.context.tokenContracts.findIndex(tc => {
           return tc.contractObj.options.address === data.tokenAddress;
         });
