@@ -19,7 +19,7 @@ export const unlockAllAccounts = async () => {
 
   accounts.forEach(async address => {
     await web3.eth.personal
-      .unlockAccount(address, "", "0x15180")  // 24 hours
+      .unlockAccount(address, "", 86400)  // 24 hours
       .then(console.log(address, "unlocked"))
       .catch(console.error);
   });
